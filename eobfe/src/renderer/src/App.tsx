@@ -1,5 +1,7 @@
 import Home from './components/home/Home'
 import { RouterProvider, createHashRouter } from 'react-router-dom'
+import Login from './components/Login/Login'
+import Register from './components/Register/Register'
 
 const router = createHashRouter([
   {
@@ -7,6 +9,22 @@ const router = createHashRouter([
     element: (
       <>
         <Home />
+      </>
+    )
+  },
+  {
+    path: '/login',
+    element: (
+      <>
+        <Login />
+      </>
+    )
+  },
+  {
+    path: '/register',
+    element: (
+      <>
+        <Register />
       </>
     )
   }
