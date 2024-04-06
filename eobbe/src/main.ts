@@ -5,9 +5,11 @@ import helmet from 'helmet';
 
 async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule, {
-    cors: true
+    cors: true,
   });
   app.use(helmet());
+  app.setGlobalPrefix('api');
   await app.listen(3001);
+  console.log('WORKS');
 }
 bootstrap();
