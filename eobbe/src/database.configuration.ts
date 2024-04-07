@@ -13,7 +13,7 @@ export class DatabaseConfiguration implements TypeOrmOptionsFactory {
       //entities: [process.env.TYPEORM_ENTITIES],
       logging: true,
       synchronize: false,
-      //migrations: [process.env.TYPEORM_MIGRATIONS],
+      migrations: ['dist/migrations/*.js'],
       namingStrategy: new SnakeNamingStrategy(),
     };
   }
