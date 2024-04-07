@@ -11,6 +11,7 @@ import { DatabaseConfiguration } from 'src/database.configuration';
     ConfigModule.forRoot({ isGlobal: true }),
     TypeOrmModule.forRootAsync({
       useClass: DatabaseConfiguration,
+      imports: undefined,
     }),
     UserModule,
   ],

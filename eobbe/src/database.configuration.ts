@@ -6,14 +6,12 @@ export class DatabaseConfiguration implements TypeOrmOptionsFactory {
     return {
       type: 'mysql',
       host: process.env.DB_HOST,
-      port: parseInt(process.env.DB_PORT, 10) || 5432,
+      port: parseInt(process.env.DB_PORT, 10),
       username: process.env.DB_USERNAME,
       password: process.env.DB_PASSWORD,
       database: 'eob',
-      //entities: [process.env.TYPEORM_ENTITIES],
-      logging: true,
+      logging: false,
       synchronize: false,
-      migrations: ['dist/migrations/*.js'],
       namingStrategy: new SnakeNamingStrategy(),
     };
   }
