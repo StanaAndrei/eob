@@ -4,12 +4,18 @@ import {
   InsertEvent,
 } from 'typeorm';
 import { User } from './user.entity';
+import * as bcrypt from 'bcrypt';
 
 @EventSubscriber()
 export class UserSubscriber implements EntitySubscriberInterface<User> {
-  listenTo(): string | Function {
+  listenTo() {
     return User;
   }
 
-  beforeInsert(event: InsertEvent<User>): void | Promise<any> {}
+  async beforeInsert(event: InsertEvent<User>): Promise<void> {
+    event.entity.password = await bcrypt.hash(
+      event.entity.password,
+      parseInt(process.env.BCRYPT_SALT, 10),
+    );
+  }
 }
