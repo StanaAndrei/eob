@@ -15,7 +15,7 @@ export class AuthService {
     password: string,
   ): Promise<{ accessToken: string; err: string | undefined }> {
     try {
-      const user = await this.userService.findOne(email);
+      const user = await this.userService.findOne({ email });
       if (!user) {
         return { accessToken: null, err: 'EMAIL_NOT_FOUND' };
       }

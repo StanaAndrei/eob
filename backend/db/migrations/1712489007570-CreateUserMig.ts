@@ -22,6 +22,17 @@ export class CreateUserMig1712489007570 implements MigrationInterface {
             type: 'varchar',
             isNullable: false,
           },
+          {
+            name: 'created_at',
+            type: 'timestamp',
+            isNullable: false,
+            default: 'CURRENT_TIMESTAMP',
+          },
+          {
+            name: 'is_manager',
+            type: 'BOOLEAN',
+            isNullable: false,
+          }
         ],
       }),
       true,

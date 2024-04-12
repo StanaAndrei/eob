@@ -23,9 +23,8 @@ export class UserController {
 
   @Post()
   @HttpCode(HttpStatus.CREATED)
-  async create(@Body() createUSerDto: CreateUserDTO) {
-    const { email, password } = createUSerDto;
-    const ok = await this.userService.create(email, password);
+  async create(@Body() createUserDto: CreateUserDTO) {
+    const ok = await this.userService.create(createUserDto);
     if (!ok) {
       throw new InternalServerErrorException();
     }
