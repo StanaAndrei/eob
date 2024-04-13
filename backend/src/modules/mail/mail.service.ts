@@ -11,6 +11,7 @@ export class MailService {
     template: string,
     context: any,
   ): Promise<void> {
-    await this.mailerService.sendMail({ to, subject, template, context });
+    console.log('mail:', to, subject, context);
+    //await this.mailerService.sendMail({ to, subject, template, context });
   }
 }

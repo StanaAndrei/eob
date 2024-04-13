@@ -1,4 +1,9 @@
-import { MigrationInterface, QueryRunner, Table } from 'typeorm';
+import {
+  MigrationInterface,
+  QueryRunner,
+  Table,
+  TableForeignKey,
+} from 'typeorm';
 
 export class CreateUserMig1712489007570 implements MigrationInterface {
   public async up(queryRunner: QueryRunner): Promise<void> {
@@ -8,8 +13,10 @@ export class CreateUserMig1712489007570 implements MigrationInterface {
         columns: [
           {
             name: 'id',
-            type: 'serial',
+            type: 'int',
             isPrimary: true,
+            isGenerated: true,
+            generationStrategy: 'increment',
           },
           {
             name: 'email',
@@ -29,13 +36,23 @@ export class CreateUserMig1712489007570 implements MigrationInterface {
             default: 'CURRENT_TIMESTAMP',
           },
           {
-            name: 'is_manager',
-            type: 'BOOLEAN',
-            isNullable: false,
-          }
+            name: 'manager_id',
+            type: 'int',
+            isNullable: true,
+          },
         ],
       }),
       true,
+    );
+    await queryRunner.createForeignKey(
+      'users',
+      new TableForeignKey({
+        columnNames: ['manager_id'],
+        referencedColumnNames: ['id'],
+        referencedTableName: 'users',
+        onDelete: 'CASCADE',
+        name: 'FK_user_manager',
+      }),
     );
   }
 

@@ -6,6 +6,7 @@ import { UserService } from '../user/user.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { User } from '../user/user.entity';
 import { ConfigService } from '@nestjs/config';
+import { MailModule } from '../mail/mail.module';
 
 @Module({
   imports: [
@@ -19,6 +20,7 @@ import { ConfigService } from '@nestjs/config';
         },
       }),
     }),
+    MailModule,
   ],
   providers: [UserService, AuthService],
   controllers: [AuthController],
