@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { User } from './user.entity';
-import { CreateUserDTO } from './dtos/user-create.dto';
+import { UserDTO } from './dtos/user.dto';
 import { MailService } from '../mail/mail.service';
 import { DETAILS_SUBJECT } from '../mail/mail.consts';
 
@@ -17,11 +17,11 @@ export class UserService {
     return this.userRepo.findOne({ where });
   }
 
-  async create(createUserDto: CreateUserDTO): Promise<boolean> {
+  async create(UserDTO: UserDTO): Promise<boolean> {
     try {
       const user = new User();
-      user.email = createUserDto.email;
-      user.password = createUserDto.password;
+      user.email = UserDTO.email;
+      user.password = UserDTO.password;
       await this.userRepo.save(user);
       return true;
     } catch (err) {
@@ -45,6 +45,18 @@ export class UserService {
     } catch (err) {
       console.error(err);
       return false;
+    }
+  }
+
+  async getMyEmployees(id: number): Promise<User[]> {
+    try {
+      const employees = await this.userRepo.find({
+        where: { managerId: id },
+      });
+      return employees;
+    } catch (err) {
+      console.error(err);
+      return null;
     }
   }
 }

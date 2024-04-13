@@ -1,3 +1,4 @@
+import { Exclude } from 'class-transformer';
 import {
   Entity,
   Column,
@@ -6,6 +7,7 @@ import {
   ManyToOne,
   OneToMany,
 } from 'typeorm';
+import * as bcrypt from 'bcrypt';
 
 @Entity('users')
 export class User {
@@ -16,6 +18,7 @@ export class User {
   email: string;
 
   @Column()
+  @Exclude()
   password: string;
 
   @ManyToOne(() => User, (user) => user.subordinates)
@@ -38,5 +41,9 @@ export class User {
 
   get isManager(): boolean {
     return this.managerId == null;
+  }
+
+  isPasswordValid(password: string): boolean {
+    return !!bcrypt.compareSync(password, this.password);
   }
 }

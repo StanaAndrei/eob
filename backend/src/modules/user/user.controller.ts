@@ -9,27 +9,27 @@ import {
   Post,
   Req,
   Request,
-  UseGuards,
+  UseInterceptors,
 } from '@nestjs/common';
 import { UserService } from './user.service';
-import { CreateUserDTO } from './dtos/user-create.dto';
-import { AuthGuard } from '../auth/auth.guard';
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+import { UserDTO } from './dtos/user.dto';
+import { AllowAnon } from '../auth/auth.guard';
+import { UserInterceptor } from './user.interceptor';
 
 @Controller('user')
+@UseInterceptors(UserInterceptor)
 export class UserController {
   constructor(private userService: UserService) {}
 
   @Get()
-  findOne() {
-    console.log('====================================');
-    console.log();
-    console.log('====================================');
-  }
+  findOne() {}
 
   @Post()
   @HttpCode(HttpStatus.CREATED)
-  async create(@Body() createUserDto: CreateUserDTO) {
-    const ok = await this.userService.create(createUserDto);
+  @AllowAnon()
+  async create(@Body() userDTO: UserDTO) {
+    const ok = await this.userService.create(userDTO);
     if (!ok) {
       throw new InternalServerErrorException();
     }
@@ -37,11 +37,16 @@ export class UserController {
 
   @Post('other/:email')
   @HttpCode(HttpStatus.CREATED)
-  @UseGuards(AuthGuard)
   async createOther(@Req() request: Request, @Param('email') email: string) {
     const ok = await this.userService.createOther(request['user_id'], email);
     if (!ok) {
       throw new InternalServerErrorException();
     }
+  }
+
+  @Get('/my-employees')
+  async getMyEmployees(@Req() request: Request) {
+    const id = request['user_id'];
+    return await this.userService.getMyEmployees(id);
   }
 }
