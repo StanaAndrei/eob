@@ -21,4 +21,10 @@ export class User {
 
   @CreateDateColumn()
   createdAt: Date;
+
+  get isOld(): boolean {
+    const oneYearAgo = new Date();
+    oneYearAgo.setFullYear(oneYearAgo.getFullYear() - 1);
+    return this.createdAt < oneYearAgo;
+  }
 }
