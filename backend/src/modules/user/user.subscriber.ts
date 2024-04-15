@@ -18,7 +18,7 @@ export class UserSubscriber implements EntitySubscriberInterface<User> {
   }
 
   async beforeUpdate(event: UpdateEvent<User>): Promise<any> {
-    //await this.encryptPassword(event.entity as User);
+    await this.encryptPassword(event.entity as User);
   }
 
   private async encryptPassword(user: User) {
