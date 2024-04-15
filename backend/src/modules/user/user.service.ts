@@ -35,6 +35,7 @@ export class UserService {
       const user = new User();
       user.email = email;
       user.managerId = managerId;
+      user.changedPassword = false;
       const genPass = Math.random().toString(36).slice(-8);
       user.password = genPass;
       await this.userRepo.save(user);
@@ -57,6 +58,23 @@ export class UserService {
     } catch (err) {
       console.error(err);
       return null;
+    }
+  }
+
+  async changePassword(id: number, newPassword: string): Promise<boolean> {
+    try {
+      const user = await this.userRepo.findOne({
+        where: { id },
+      });
+      if (user.changedPassword) {
+        return false;
+      }
+      user.changedPassword = true;
+      user.password = newPassword;
+      await user.save();
+    } catch (err) {
+      console.error(err);
+      return false;
     }
   }
 }

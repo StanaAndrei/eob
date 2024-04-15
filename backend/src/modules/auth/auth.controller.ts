@@ -9,6 +9,7 @@ import {
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { LoginDTO } from './auth.dto';
+import { AllowAnon } from './auth.guard';
 
 @Controller('auth')
 export class AuthController {
@@ -16,6 +17,7 @@ export class AuthController {
 
   @Post()
   @HttpCode(HttpStatus.OK)
+  @AllowAnon()
   async signIn(@Body() loginDto: LoginDTO) {
     const { email, password } = loginDto;
     const res = await this.authService.signIn(email, password);

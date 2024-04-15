@@ -16,7 +16,7 @@ export class UserInterceptor implements NestInterceptor {
   ): Observable<any> | Promise<Observable<any>> {
     return next.handle().pipe(
       map((data) =>
-        data.map((item: User) => {
+        data?.map((item: User) => {
           const res = { ...item };
           delete res.password;
           return res;

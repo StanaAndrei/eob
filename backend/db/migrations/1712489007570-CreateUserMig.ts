@@ -40,6 +40,11 @@ export class CreateUserMig1712489007570 implements MigrationInterface {
             type: 'int',
             isNullable: true,
           },
+          {
+            name: 'changed_password',
+            type: 'bool',
+            isNullable: true,
+          },
         ],
       }),
       true,

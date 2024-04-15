@@ -6,11 +6,12 @@ import {
   CreateDateColumn,
   ManyToOne,
   OneToMany,
+  BaseEntity,
 } from 'typeorm';
 import * as bcrypt from 'bcrypt';
 
 @Entity('users')
-export class User {
+export class User extends BaseEntity {
   @PrimaryGeneratedColumn()
   id: number;
 
@@ -26,6 +27,9 @@ export class User {
 
   @Column({ nullable: true })
   managerId: number;
+
+  @Column({ nullable: true })
+  changedPassword: boolean;
 
   @OneToMany(() => User, (user) => user.manager)
   subordinates: User[];

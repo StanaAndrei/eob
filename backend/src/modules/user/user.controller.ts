@@ -6,6 +6,7 @@ import {
   HttpStatus,
   InternalServerErrorException,
   Param,
+  Patch,
   Post,
   Req,
   Request,
@@ -44,9 +45,21 @@ export class UserController {
     }
   }
 
-  @Get('/my-employees')
+  @Get('my-employees')
   async getMyEmployees(@Req() request: Request) {
     const id = request['user_id'];
     return await this.userService.getMyEmployees(id);
+  }
+
+  @Patch('change-password/:newPassword')
+  async changePassword(
+    @Req() request: Request,
+    @Param('newPassword') newPassword: string,
+  ) {
+    const id = request['user_id'];
+    const ok = await this.userService.changePassword(id, newPassword);
+    if (ok) {
+      throw new InternalServerErrorException();
+    }
   }
 }
