@@ -6,8 +6,6 @@ import {
 } from '@nestjs/common';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
-import { plainToClassFromExist } from 'class-transformer';
-import { UserDTO } from './dtos/user.dto';
 import { User } from './user.entity';
 
 @Injectable()
@@ -25,11 +23,5 @@ export class UserInterceptor implements NestInterceptor {
         }),
       ),
     );
-  }
-
-  private transformUser(user: User): UserDTO {
-    return plainToClassFromExist(new UserDTO(), user, {
-      excludeExtraneousValues: true,
-    });
   }
 }

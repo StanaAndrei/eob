@@ -21,7 +21,7 @@ import { ConfigModule } from '@nestjs/config';
         dir: join(__dirname, 'templates'),
         adapter: new HandlebarsAdapter(),
         options: {
-          strict: false,
+          strict: true,
         },
       },
     }),
