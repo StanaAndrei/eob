@@ -6,7 +6,7 @@
   "private": true,
   "license": "UNLICENSED",
   "scripts": {
-    "build": "nest build",
+    "build": "nest build ",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\" && prettier --write \"db/**/*.ts\"",
     "start": "nest start",
     "start:dev": "nest start --watch",
@@ -41,6 +41,7 @@
     "cache-manager": "^5.5.1",
     "class-transformer": "^0.5.1",
     "class-validator": "^0.14.1",
+    "cpx": "^1.5.0",
     "csurf": "^1.11.0",
     "generate-password": "^1.7.1",
     "generate-password-ts": "^1.6.5",

@@ -14,6 +14,9 @@ export class AppController {
   @AllowAnon()
   async getHello() {
     //return this.appService.getHello();
+    console.log('====================================');
+    console.log();
+    console.log('====================================');
     await this.mailService.sendEmail(
       'stadey33@gmail.com',
       'test',

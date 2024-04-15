@@ -18,7 +18,7 @@ import { ConfigModule } from '@nestjs/config';
         },
       },
       template: {
-        dir: join(__dirname, 'templates'),
+        dir: join(process.cwd(), 'src/modules/mail/templates'),
         adapter: new HandlebarsAdapter(),
         options: {
           strict: true,

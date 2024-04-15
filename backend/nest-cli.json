@@ -4,7 +4,11 @@
   "sourceRoot": "src",
   "root": "./",
   "compilerOptions": {
-    "assets": ["mail/templates/**/*"],
+    "assets": [
+      {
+        "include": "modules/mail/templates/**/*.hbs",
+        "outDir": "dist/src"
+      }],
     "watchAssets": true
   }
 }
