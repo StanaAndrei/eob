@@ -7,13 +7,20 @@ import {
   ManyToOne,
   OneToMany,
   BaseEntity,
+  OneToOne,
+  JoinColumn,
 } from 'typeorm';
 import * as bcrypt from 'bcrypt';
+import { Profile } from '../profile/profile.entity';
 
 @Entity('users')
 export class User extends BaseEntity {
   @PrimaryGeneratedColumn()
   id: number;
+
+  @OneToOne(() => Profile)
+  @JoinColumn()
+  profile: Profile;
 
   @Column()
   email: string;
