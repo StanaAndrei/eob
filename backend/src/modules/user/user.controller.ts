@@ -58,7 +58,7 @@ export class UserController {
   ) {
     const id = request['user_id'];
     const ok = await this.userService.changePassword(id, newPassword);
-    if (ok) {
+    if (!ok) {
       throw new InternalServerErrorException();
     }
   }
