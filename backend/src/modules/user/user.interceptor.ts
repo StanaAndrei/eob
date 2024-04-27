@@ -16,16 +16,19 @@ export class UserInterceptor implements NestInterceptor {
   ): Observable<any> | Promise<Observable<any>> {
     return next.handle().pipe(
       map((data) => {
-        if (!Array.isArray(data)) {
+        if (data instanceof User) {
           const res = { ...data };
           delete res.password;
           return res;
         }
-        return data?.map((item: User) => {
-          const res = { ...item };
-          delete res.password;
-          return res;
-        });
+        if (Array.isArray(data)) {
+          return data?.map((item: User) => {
+            const res = { ...item };
+            delete res.password;
+            return res;
+          });
+        }
+        return data;
       }),
     );
   }
