@@ -5,11 +5,13 @@ import {
   TableForeignKey,
 } from 'typeorm';
 
-export class CreateUserMig1712489007570 implements MigrationInterface {
+export class CreateProfileMig1714216601424 implements MigrationInterface {
+  name = 'CreateProfileMig1714216601424';
+
   public async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.createTable(
       new Table({
-        name: 'users',
+        name: 'profiles',
         columns: [
           {
             name: 'id',
@@ -19,41 +21,26 @@ export class CreateUserMig1712489007570 implements MigrationInterface {
             generationStrategy: 'increment',
           },
           {
-            name: 'email',
-            type: 'varchar',
-            isNullable: false,
-            isUnique: true,
-          },
-          {
-            name: 'password',
-            type: 'varchar',
-            isNullable: false,
-          },
-          {
-            name: 'created_at',
-            type: 'timestamp',
-            isNullable: false,
-            default: 'CURRENT_TIMESTAMP',
-          },
-          {
-            name: 'manager_id',
+            name: 'xp',
             type: 'int',
-            isNullable: true,
+            isNullable: false,
           },
           {
-            name: 'changed_password',
+            name: 'ind_type',
+            type: 'enum',
+            enum: ['TECH', 'HEALTH', 'FINANCE', 'EDU', 'RETAIL', 'OTHER'],
+            enumName: 'IndustryType',
+            isNullable: false,
+          },
+          {
+            name: 'is_be',
             type: 'bool',
-            isNullable: true,
-          },
-          {
-            name: 'name',
-            type: 'text',
             isNullable: false,
           },
           {
-            name: 'profile_id',
-            type: 'int',
-            isNullable: true,
+            name: 'is_fe',
+            type: 'bool',
+            isNullable: false,
           },
         ],
       }),
@@ -62,16 +49,19 @@ export class CreateUserMig1712489007570 implements MigrationInterface {
     await queryRunner.createForeignKey(
       'users',
       new TableForeignKey({
-        columnNames: ['manager_id'],
+        columnNames: ['profile_id'],
         referencedColumnNames: ['id'],
-        referencedTableName: 'users',
+        referencedTableName: 'profiles',
         onDelete: 'CASCADE',
-        name: 'FK_user_manager',
+        name: 'FK_user_profile',
       }),
     );
   }
 
   public async down(queryRunner: QueryRunner): Promise<void> {
-    await queryRunner.dropTable('users');
+    await queryRunner.query(
+      'ALTER TABLE users DROP CONSTRAINT FK_user_profile',
+    );
+    await queryRunner.dropTable('profiles');
   }
 }

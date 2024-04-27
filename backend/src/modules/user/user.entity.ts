@@ -23,6 +23,9 @@ export class User extends BaseEntity {
   profile: Profile;
 
   @Column()
+  profileId: number;
+
+  @Column()
   email: string;
 
   @Column()
@@ -43,6 +46,9 @@ export class User extends BaseEntity {
 
   @CreateDateColumn()
   createdAt: Date;
+
+  @Column()
+  name: string;
 
   get isOld(): boolean {
     const oneYearAgo = new Date();

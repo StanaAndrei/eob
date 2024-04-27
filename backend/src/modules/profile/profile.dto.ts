@@ -9,8 +9,8 @@ export class ProfileDTO {
   indType: IndustryType;
 
   @IsNotEmpty()
-  isBE: boolean;
+  isBe: boolean;
 
   @IsNotEmpty()
-  isFE: boolean;
+  isFe: boolean;
 }

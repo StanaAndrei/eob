@@ -2,6 +2,7 @@ import { TypeOrmModuleOptions, TypeOrmOptionsFactory } from '@nestjs/typeorm';
 import { SnakeNamingStrategy } from 'typeorm-naming-strategies';
 import { User } from './modules/user/user.entity';
 import { UserSubscriber } from './modules/user/user.subscriber';
+import { Profile } from './modules/profile/profile.entity';
 
 export class DatabaseConfiguration implements TypeOrmOptionsFactory {
   createTypeOrmOptions(): TypeOrmModuleOptions | Promise<TypeOrmModuleOptions> {
@@ -15,7 +16,7 @@ export class DatabaseConfiguration implements TypeOrmOptionsFactory {
       logging: false,
       synchronize: false,
       namingStrategy: new SnakeNamingStrategy(),
-      entities: [User],
+      entities: [User, Profile],
       subscribers: [UserSubscriber],
     };
   }

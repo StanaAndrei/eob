@@ -9,7 +9,7 @@ export enum IndustryType {
   OTHER,
 }
 
-@Entity()
+@Entity('profiles')
 export class Profile extends BaseEntity {
   @PrimaryGeneratedColumn()
   id: number;
@@ -25,8 +25,8 @@ export class Profile extends BaseEntity {
   indType: IndustryType;
 
   @Column()
-  isBE: boolean;
+  isBe: boolean;
 
   @Column()
-  isFE: boolean;
+  isFe: boolean;
 }

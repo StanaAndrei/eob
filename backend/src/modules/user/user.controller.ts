@@ -17,14 +17,18 @@ import { UserService } from './user.service';
 import { UserDTO } from './dtos/user.dto';
 import { AllowAnon } from '../auth/auth.guard';
 import { UserInterceptor } from './user.interceptor';
+import { OtherUserDTO } from './dtos/other.dto';
 
 @Controller('user')
 @UseInterceptors(UserInterceptor)
 export class UserController {
   constructor(private userService: UserService) {}
 
-  @Get()
-  findOne() {}
+  @Get('/:id')
+  async getWithProfile(@Param('id') id: number) {
+    const userWithProfile = await this.userService.getWithProfile(id);
+    return userWithProfile;
+  }
 
   @Post()
   @HttpCode(HttpStatus.CREATED)
@@ -36,10 +40,16 @@ export class UserController {
     }
   }
 
-  @Post('other/:email')
+  @Post('other')
   @HttpCode(HttpStatus.CREATED)
-  async createOther(@Req() request: Request, @Param('email') email: string) {
-    const ok = await this.userService.createOther(request['user_id'], email);
+  async createOther(
+    @Req() request: Request,
+    @Body() otherUserDTO: OtherUserDTO,
+  ) {
+    const ok = await this.userService.createOther(
+      request['user_id'],
+      otherUserDTO,
+    );
     if (!ok) {
       throw new InternalServerErrorException();
     }
