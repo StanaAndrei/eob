@@ -1,4 +1,14 @@
-import { BaseEntity, Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import {
+  BaseEntity,
+  Column,
+  Entity,
+  JoinColumn,
+  OneToOne,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
+import { SSProfile } from './subprofiles/ssprofile.entity';
+import { FEProfile } from './subprofiles/feprofile.entity';
+import { BEProfile } from './subprofiles/beprofile.entity';
 
 export enum IndustryType {
   TECH,
@@ -24,9 +34,15 @@ export class Profile extends BaseEntity {
   })
   indType: IndustryType;
 
-  @Column()
-  isBe: boolean;
+  @OneToOne(() => FEProfile)
+  @JoinColumn()
+  feProfile: FEProfile;
 
-  @Column()
-  isFe: boolean;
+  @OneToOne(() => BEProfile)
+  @JoinColumn()
+  beProfile: BEProfile;
+
+  @OneToOne(() => SSProfile)
+  @JoinColumn()
+  ssProfile: SSProfile;
 }

@@ -5,13 +5,13 @@ import {
   TableForeignKey,
 } from 'typeorm';
 
-export class CreateProfileMig1714216601424 implements MigrationInterface {
-  name = 'CreateProfileMig1714216601424';
+export class CreateBEProfileMig1714312715588 implements MigrationInterface {
+  name = 'CreateBEProfileMig1714312715588';
 
   public async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.createTable(
       new Table({
-        name: 'profiles',
+        name: 'beprofiles',
         columns: [
           {
             name: 'id',
@@ -21,52 +21,55 @@ export class CreateProfileMig1714216601424 implements MigrationInterface {
             generationStrategy: 'increment',
           },
           {
-            name: 'xp',
+            name: 'fws',
+            type: 'text',
+            isNullable: false,
+          },
+          {
+            name: 'plangs',
+            type: 'text',
+            isNullable: false,
+          },
+          {
+            name: 'docker_lvl',
             type: 'int',
             isNullable: false,
           },
           {
-            name: 'ind_type',
-            type: 'enum',
-            enum: ['TECH', 'HEALTH', 'FINANCE', 'EDU', 'RETAIL', 'OTHER'],
-            enumName: 'IndustryType',
+            name: 'kuber_lvl',
+            type: 'int',
             isNullable: false,
           },
           {
-            name: 'be_profile_id',
+            name: 'aws_azure_gcp_lvl',
             type: 'int',
-            isNullable: true,
+            isNullable: false,
           },
           {
-            name: 'fe_profile_id',
+            name: 'sql_lvl',
             type: 'int',
-            isNullable: true,
-          },
-          {
-            name: 'ss_profile_id',
-            type: 'int',
-            isNullable: true,
+            isNullable: false,
           },
         ],
       }),
       true,
     );
     await queryRunner.createForeignKey(
-      'users',
+      'profiles',
       new TableForeignKey({
-        columnNames: ['profile_id'],
+        columnNames: ['be_profile_id'],
         referencedColumnNames: ['id'],
-        referencedTableName: 'profiles',
+        referencedTableName: 'beprofiles',
         onDelete: 'CASCADE',
-        name: 'FK_user_profile',
+        name: 'FK_beprofile_profile',
       }),
     );
   }
 
   public async down(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(
-      'ALTER TABLE users DROP CONSTRAINT FK_user_profile',
+      'ALTER TABLE profiles DROP CONSTRAINT FK_beprofile_profile',
     );
-    await queryRunner.dropTable('profiles');
+    await queryRunner.dropTable('beprofiles');
   }
 }

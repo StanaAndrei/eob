@@ -5,13 +5,13 @@ import {
   TableForeignKey,
 } from 'typeorm';
 
-export class CreateProfileMig1714216601424 implements MigrationInterface {
-  name = 'CreateProfileMig1714216601424';
+export class CreateFEProfileMig1714312418589 implements MigrationInterface {
+  name = 'CreateFEProfileMig1714312418589';
 
   public async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.createTable(
       new Table({
-        name: 'profiles',
+        name: 'feprofiles',
         columns: [
           {
             name: 'id',
@@ -21,52 +21,55 @@ export class CreateProfileMig1714216601424 implements MigrationInterface {
             generationStrategy: 'increment',
           },
           {
-            name: 'xp',
+            name: 'fws',
+            type: 'text',
+            isNullable: false,
+          },
+          {
+            name: 'js_lvl',
             type: 'int',
             isNullable: false,
           },
           {
-            name: 'ind_type',
-            type: 'enum',
-            enum: ['TECH', 'HEALTH', 'FINANCE', 'EDU', 'RETAIL', 'OTHER'],
-            enumName: 'IndustryType',
+            name: 'ts_lvl',
+            type: 'int',
             isNullable: false,
           },
           {
-            name: 'be_profile_id',
+            name: 'html_lvl',
             type: 'int',
-            isNullable: true,
+            isNullable: false,
           },
           {
-            name: 'fe_profile_id',
+            name: 'css_lvl',
             type: 'int',
-            isNullable: true,
+            isNullable: false,
           },
           {
-            name: 'ss_profile_id',
-            type: 'int',
-            isNullable: true,
+            name: 'tools',
+            type: 'text',
+            isNullable: false,
           },
         ],
       }),
       true,
     );
     await queryRunner.createForeignKey(
-      'users',
+      'profiles',
       new TableForeignKey({
-        columnNames: ['profile_id'],
+        columnNames: ['fe_profile_id'],
         referencedColumnNames: ['id'],
-        referencedTableName: 'profiles',
+        referencedTableName: 'feprofiles',
         onDelete: 'CASCADE',
-        name: 'FK_user_profile',
+        name: 'FK_feprofile_profile',
       }),
     );
   }
 
   public async down(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(
-      'ALTER TABLE users DROP CONSTRAINT FK_user_profile',
+      'ALTER TABLE profiles DROP CONSTRAINT FK_feprofile_profile',
     );
-    await queryRunner.dropTable('profiles');
+    await queryRunner.dropTable('feprofiles');
   }
 }
