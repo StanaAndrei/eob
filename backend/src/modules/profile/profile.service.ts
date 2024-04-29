@@ -7,12 +7,9 @@ import { FEProfile } from './subprofiles/feprofile.entity';
 import { SSProfile } from './subprofiles/ssprofile.entity';
 import { BEProfile } from './subprofiles/beprofile.entity';
 //import { Not } from 'typeorm';
-import { UserService } from '../user/user.service';
 
 @Injectable()
 export class ProfileService {
-  constructor(private userService: UserService) {}
-
   async createProfile(
     profileDTO: ProfileDTO,
     userID: number,

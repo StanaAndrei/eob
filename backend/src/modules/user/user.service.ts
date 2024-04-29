@@ -1,6 +1,4 @@
 import { Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
 import { User } from './user.entity';
 import { UserDTO } from './dtos/user.dto';
 import { MailService } from '../mail/mail.service';
@@ -9,13 +7,10 @@ import { OtherUserDTO } from './dtos/other.dto';
 
 @Injectable()
 export class UserService {
-  constructor(
-    @InjectRepository(User) private userRepo: Repository<User>,
-    private mailService: MailService,
-  ) {}
+  constructor(private mailService: MailService) {}
 
   async findOne(where: any): Promise<User | undefined> {
-    return this.userRepo.findOne({ where });
+    return User.findOne({ where });
   }
 
   async getWithProfile(id: number) {
@@ -41,7 +36,7 @@ export class UserService {
       user.email = userDTO.email;
       user.password = userDTO.password;
       user.name = userDTO.name;
-      await this.userRepo.save(user);
+      await user.save();
       return true;
     } catch (err) {
       console.error(err);
@@ -61,7 +56,7 @@ export class UserService {
       user.name = otherUserDTO.name;
       const genPass = Math.random().toString(36).slice(-8);
       user.password = genPass;
-      await this.userRepo.save(user);
+      await user.save();
       await this.mailService.sendEmail(
         otherUserDTO.email,
         DETAILS_SUBJECT,
@@ -79,7 +74,7 @@ export class UserService {
 
   async getMyEmployees(id: number): Promise<User[]> {
     try {
-      const employees = await this.userRepo.find({
+      const employees = await User.find({
         where: { managerId: id },
       });
       return employees;
@@ -91,7 +86,7 @@ export class UserService {
 
   async changePassword(id: number, newPassword: string): Promise<boolean> {
     try {
-      const user = await this.userRepo.findOne({
+      const user = await User.findOne({
         where: { id },
       });
       if (user.changedPassword) {
@@ -108,7 +103,7 @@ export class UserService {
 
   async getNewbiesOf(id: number): Promise<User[]> {
     try {
-      const newbies = await this.userRepo.find({
+      const newbies = await User.find({
         where: { buddyId: id },
       });
       return newbies;
@@ -120,7 +115,7 @@ export class UserService {
 
   async manualMatch(buddyId: number, newbieId: number) {
     try {
-      const newbie = await this.userRepo.findOne({
+      const newbie = await User.findOne({
         where: { id: newbieId },
       });
       if (!newbie || newbie.buddyId === buddyId) {

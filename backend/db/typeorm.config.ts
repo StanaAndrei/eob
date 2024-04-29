@@ -8,7 +8,7 @@ config();
 
 const configService = new ConfigService();
 
-const dsOpts: DataSourceOptions & SeederOptions = {
+export const dsoAndSo: DataSourceOptions & SeederOptions = {
   type: 'mysql',
   host: configService.get('DB_HOST'),
   port: Number(configService.get('DB_PORT')),
@@ -24,4 +24,4 @@ const dsOpts: DataSourceOptions & SeederOptions = {
   seedTracking: false,
 };
 
-export default new DataSource(dsOpts);
+export default new DataSource(dsoAndSo);

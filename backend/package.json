@@ -25,7 +25,10 @@
     "migration:revert": "npm run typeorm -- -d ./db/typeorm.config.ts migration:revert",
     "migration:revert:all": "sh ./scripts/revmigs.sh",
     "migration:show": "npm run typeorm -- migration:show -d ./db/typeorm.config.ts",
-    "seed:run": "ts-node ./db/runseed.ts"
+    "seed:run": "ts-node ./db/runseed.ts",
+    "db:drop": "ts-node ./db/dropdb.ts",
+    "db:mk": "ts-node ./db/mkdb.ts",
+    "db:reseed": "npm run db:drop && npm run db:mk && npm run migration:run && npm run seed:run"
   },
   "dependencies": {
     "@nest-modules/mailer": "^0.4.1",

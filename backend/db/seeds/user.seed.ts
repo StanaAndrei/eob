@@ -9,15 +9,31 @@ export default class UserSeeder implements Seeder {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     factoryManager: SeederFactoryManager,
   ): Promise<any> {
+    await dataSource.query('ALTER TABLE users AUTO_INCREMENT=1');
     const userRepo = dataSource.getRepository(User);
+    const hashedPassword = bcrypt.hashSync(
+      'password',
+      parseInt(process.env.BCRYPT_SALT, 10),
+    );
     await userRepo.insert({
       name: 'andrew',
       email: 'andrew@gmail.com',
-      password: bcrypt.hashSync(
-        'password',
-        parseInt(process.env.BCRYPT_SALT, 10),
-      ),
-      isManager: true,
-    }); //*/
+      password: hashedPassword,
+    });
+    await userRepo.insert({
+      name: 'andrew2',
+      email: 'andrew2@gmail.com',
+      password: hashedPassword,
+      createdAt: '2020-04-29 13:13:13',
+      managerId: 1,
+    });
+    await userRepo.insert({
+      name: 'andrew3',
+      email: 'andrew3@gmail.com',
+      password: hashedPassword,
+      createdAt: '2024-04-29 13:13:13',
+      managerId: 1,
+      buddyId: 2,
+    });
   }
 }

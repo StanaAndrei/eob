@@ -36,6 +36,9 @@ export class User extends BaseEntity {
   managerId: number;
 
   @Column({ nullable: true })
+  profileId: number;
+
+  @Column({ nullable: true })
   changedPassword: boolean;
 
   @OneToMany(() => User, (user) => user.manager)
