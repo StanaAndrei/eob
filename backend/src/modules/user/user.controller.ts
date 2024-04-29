@@ -9,9 +9,10 @@ import {
   Patch,
   Post,
   Req,
-  Request,
+  Res,
   UseInterceptors,
 } from '@nestjs/common';
+import { Request, Response } from 'express';
 import { UserService } from './user.service';
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { UserDTO } from './dtos/user.dto';
@@ -73,5 +74,26 @@ export class UserController {
     if (!ok) {
       throw new InternalServerErrorException();
     }
+  }
+
+  @RolesPriority(ROLE_PRIORITY.BUDDY)
+  @Get('/newbies-of/:id')
+  async getNewbiesOf(@Req() request: Request, @Param('id') id: number) {
+    const newbies = await this.userService.getNewbiesOf(id);
+    if (!newbies) {
+      throw new InternalServerErrorException();
+    }
+    return newbies;
+  }
+
+  @RolesPriority(ROLE_PRIORITY.MANAGER)
+  @Patch('/manual-match/:buddyId/:newbieId')
+  async manualMatch(
+    @Param('buddyId') buddyId: number,
+    @Param('newbieId') newbieId: number,
+    @Res() res: Response,
+  ) {
+    const ok = await this.userService.manualMatch(buddyId, newbieId);
+    res.status(ok ? HttpStatus.NO_CONTENT : HttpStatus.NOT_MODIFIED).send();
   }
 }

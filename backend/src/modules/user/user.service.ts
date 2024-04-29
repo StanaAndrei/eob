@@ -105,4 +105,33 @@ export class UserService {
       return false;
     }
   }
+
+  async getNewbiesOf(id: number): Promise<User[]> {
+    try {
+      const newbies = await this.userRepo.find({
+        where: { buddyId: id },
+      });
+      return newbies;
+    } catch (err) {
+      console.error(err);
+      return null;
+    }
+  }
+
+  async manualMatch(buddyId: number, newbieId: number) {
+    try {
+      const newbie = await this.userRepo.findOne({
+        where: { id: newbieId },
+      });
+      if (!newbie || newbie.buddyId === buddyId) {
+        return false;
+      }
+      newbie.buddyId = buddyId;
+      await newbie.save();
+      return true;
+    } catch (err) {
+      console.error(err);
+      return false;
+    }
+  }
 }

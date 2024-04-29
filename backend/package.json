@@ -24,7 +24,8 @@
     "migration:create": "npm run typeorm -- migration:create ./db/migrations/$npm_config_name",
     "migration:revert": "npm run typeorm -- -d ./db/typeorm.config.ts migration:revert",
     "migration:revert:all": "sh ./scripts/revmigs.sh",
-    "migration:show": "npm run typeorm -- migration:show -d ./db/typeorm.config.ts"
+    "migration:show": "npm run typeorm -- migration:show -d ./db/typeorm.config.ts",
+    "seed:run": "ts-node ./db/runseed.ts"
   },
   "dependencies": {
     "@nest-modules/mailer": "^0.4.1",
@@ -44,6 +45,7 @@
     "class-validator": "^0.14.1",
     "cpx": "^1.5.0",
     "csurf": "^1.11.0",
+    "dotenv": "^16.4.5",
     "generate-password": "^1.7.1",
     "generate-password-ts": "^1.6.5",
     "handlebars": "^4.7.8",
@@ -56,6 +58,7 @@
     "reflect-metadata": "^0.2.0",
     "rxjs": "^7.8.1",
     "typeorm": "^0.3.20",
+    "typeorm-extension": "^3.5.1",
     "typeorm-naming-strategies": "^4.1.0"
   },
   "devDependencies": {
@@ -80,7 +83,7 @@
     "supertest": "^6.3.3",
     "ts-jest": "^29.1.0",
     "ts-loader": "^9.4.3",
-    "ts-node": "^10.9.1",
+    "ts-node": "^10.9.2",
     "tsconfig-paths": "^4.2.0",
     "typescript": "^5.1.3"
   },

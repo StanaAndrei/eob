@@ -63,4 +63,13 @@ export class User extends BaseEntity {
 
   @Column({ select: false, nullable: true, insert: false, update: false })
   public rolePriority: number;
+
+  @Column({ nullable: true })
+  buddyId: number;
+
+  @ManyToOne(() => User, (user) => user.newbies)
+  buddy: User;
+
+  @OneToMany(() => User, (user) => user.buddy)
+  newbies: User;
 }

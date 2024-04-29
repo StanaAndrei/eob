@@ -6,9 +6,13 @@ import { Profile } from './profile.entity';
 import { FEProfile } from './subprofiles/feprofile.entity';
 import { SSProfile } from './subprofiles/ssprofile.entity';
 import { BEProfile } from './subprofiles/beprofile.entity';
+//import { Not } from 'typeorm';
+import { UserService } from '../user/user.service';
 
 @Injectable()
 export class ProfileService {
+  constructor(private userService: UserService) {}
+
   async createProfile(
     profileDTO: ProfileDTO,
     userID: number,
@@ -37,6 +41,14 @@ export class ProfileService {
     } catch (err) {
       console.error(err);
       return false;
+    }
+  }
+
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  private async matchBasedOnProfile(newbie: User) {
+    try {
+    } catch (err) {
+      console.error(err);
     }
   }
 }
