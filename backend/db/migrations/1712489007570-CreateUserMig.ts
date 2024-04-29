@@ -54,6 +54,7 @@ export class CreateUserMig1712489007570 implements MigrationInterface {
             name: 'profile_id',
             type: 'int',
             isNullable: true,
+            isUnique: true,
           },
         ],
       }),

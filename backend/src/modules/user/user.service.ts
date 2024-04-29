@@ -20,13 +20,15 @@ export class UserService {
 
   async getWithProfile(id: number) {
     try {
-      const ans = await User.find({
+      return await User.findOne({
         where: { id },
-        relations: {
-          profile: true,
-        },
+        relations: [
+          'profile',
+          'profile.ssProfile',
+          'profile.beProfile',
+          'profile.feProfile',
+        ],
       });
-      return ans[0];
     } catch (err) {
       console.error(err);
       return null;

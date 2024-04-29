@@ -18,6 +18,7 @@ import { UserDTO } from './dtos/user.dto';
 import { AllowAnon } from '../auth/auth.guard';
 import { UserInterceptor } from './user.interceptor';
 import { OtherUserDTO } from './dtos/other.dto';
+import { ROLE_PRIORITY, RolesPriority } from '../auth/role.guard';
 
 @Controller('user')
 @UseInterceptors(UserInterceptor)
@@ -56,6 +57,7 @@ export class UserController {
   }
 
   @Get('my-employees')
+  @RolesPriority(ROLE_PRIORITY.MANAGER)
   async getMyEmployees(@Req() request: Request) {
     const id = request['user_id'];
     return await this.userService.getMyEmployees(id);

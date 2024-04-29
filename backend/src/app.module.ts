@@ -11,6 +11,7 @@ import { AuthGuard } from './modules/auth/auth.guard';
 import { JwtModule, JwtService } from '@nestjs/jwt';
 import { MailModule } from './modules/mail/mail.module';
 import { ProfileModule } from './modules/profile/profile.module';
+import { RoleGuard } from './modules/auth/role.guard';
 
 @Module({
   imports: [
@@ -40,6 +41,10 @@ import { ProfileModule } from './modules/profile/profile.module';
     {
       provide: APP_GUARD,
       useClass: AuthGuard,
+    },
+    {
+      provide: APP_GUARD,
+      useClass: RoleGuard,
     },
   ],
 })

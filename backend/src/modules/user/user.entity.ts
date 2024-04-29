@@ -60,4 +60,7 @@ export class User extends BaseEntity {
   isPasswordValid(password: string): boolean {
     return !!bcrypt.compareSync(password, this.password);
   }
+
+  @Column({ select: false, nullable: true, insert: false, update: false })
+  public rolePriority: number;
 }
