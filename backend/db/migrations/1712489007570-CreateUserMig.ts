@@ -56,6 +56,11 @@ export class CreateUserMig1712489007570 implements MigrationInterface {
             isNullable: true,
             isUnique: true,
           },
+          {
+            name: 'buddy_id',
+            type: 'int',
+            isNullable: true,
+          },
         ],
       }),
       true,

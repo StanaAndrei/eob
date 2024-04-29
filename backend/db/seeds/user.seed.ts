@@ -1,4 +1,4 @@
-import { User } from 'src/modules/user/user.entity';
+import { User } from '../../src/modules/user/user.entity';
 import { DataSource } from 'typeorm';
 import { Seeder, SeederFactoryManager } from 'typeorm-extension';
 import * as bcrypt from 'bcrypt';
@@ -9,11 +9,6 @@ export default class UserSeeder implements Seeder {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     factoryManager: SeederFactoryManager,
   ): Promise<any> {
-    console.log('====================================');
-    console.log();
-    console.log('====================================');
-    await dataSource.query('TRUNCATE "users" RESTART IDENTITY;');
-
     const userRepo = dataSource.getRepository(User);
     await userRepo.insert({
       name: 'andrew',
@@ -23,6 +18,6 @@ export default class UserSeeder implements Seeder {
         parseInt(process.env.BCRYPT_SALT, 10),
       ),
       isManager: true,
-    });
+    }); //*/
   }
 }

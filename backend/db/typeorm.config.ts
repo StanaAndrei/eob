@@ -2,6 +2,7 @@ import { DataSource, DataSourceOptions } from 'typeorm';
 import { ConfigService } from '@nestjs/config';
 import { config } from 'dotenv';
 import { SeederOptions } from 'typeorm-extension';
+import { SnakeNamingStrategy } from 'typeorm-naming-strategies';
 
 config();
 
@@ -15,10 +16,11 @@ const dsOpts: DataSourceOptions & SeederOptions = {
   password: configService.get('DB_PASSWORD'),
   database: 'eob',
   entities: [`${__dirname}/../src/**/*.entity{.ts,.js}`],
-  synchronize: configService.get('nodenv') === 'development',
+  //synchronize: configService.get('nodenv') === 'development',
   logging: configService.get('nodenv') === 'development',
   migrations: [`${__dirname}/migrations/*{.ts,.js}`],
-  seeds: [`${__dirname}/seeds/*{.js,.ts}`],
+  seeds: [`db/seeds/*.seed.ts`],
+  namingStrategy: new SnakeNamingStrategy(),
   seedTracking: false,
 };
 
