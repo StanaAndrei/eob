@@ -12,6 +12,7 @@ import {
 } from 'typeorm';
 import * as bcrypt from 'bcrypt';
 import { Profile } from '../profile/profile.entity';
+import moment from 'moment';
 
 @Entity('users')
 export class User extends BaseEntity {
@@ -51,9 +52,9 @@ export class User extends BaseEntity {
   name: string;
 
   get isOld(): boolean {
-    const oneYearAgo = new Date();
-    oneYearAgo.setFullYear(oneYearAgo.getFullYear() - 1);
-    return this.createdAt < oneYearAgo;
+    const diffInYears = moment().diff(moment(this.createdAt), 'years');
+    //console.log(this.name, '~~~', diffInYears >= 1);
+    return diffInYears >= 1;
   }
 
   get isManager(): boolean {
@@ -78,9 +79,19 @@ export class User extends BaseEntity {
 
   static async findByProfile(profileTp: string): Promise<User[]> {
     return await this.createQueryBuilder('user')
+      .where('user.paused IS FALSE')
+      //.andWhere('user.isOld IS TRUE')
       .innerJoinAndSelect('user.profile', 'profile')
       .innerJoinAndSelect(`profile.${profileTp}Profile`, `${profileTp}Profile`)
       .where(`profile.${profileTp}_profile_id IS NOT NULL`)
       .getMany();
+  }
+
+  @Column()
+  paused: boolean;
+
+  async togglePaused() {
+    this.paused = !this.paused;
+    await this.save();
   }
 }

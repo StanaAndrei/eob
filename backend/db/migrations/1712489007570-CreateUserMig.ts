@@ -61,6 +61,11 @@ export class CreateUserMig1712489007570 implements MigrationInterface {
             type: 'int',
             isNullable: true,
           },
+          {
+            name: 'paused',
+            type: 'bool',
+            default: false,
+          },
         ],
       }),
       true,

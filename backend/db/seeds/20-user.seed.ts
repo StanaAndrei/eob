@@ -32,10 +32,7 @@ export default class UserSeeder implements Seeder {
       name: 'andrew3',
       email: 'andrew3@gmail.com',
       password: hashedPassword,
-      createdAt: '2024-04-29 13:13:13',
       managerId: 1,
-      buddyId: 2,
-      //profileId: 2,
     });
   }
 }

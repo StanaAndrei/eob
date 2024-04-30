@@ -35,10 +35,10 @@ export class ProfileService {
       profile.ssProfile = ssProfile;
       await profile.save();
       user.profile = profile;
-      if (!user.isOld) {
-        await this.matchBasedOnProfile(user);
-      }
       await user.save();
+      if (!user.isOld) {
+        return await this.matchBasedOnProfile(user);
+      }
       return true;
     } catch (err) {
       console.error(err);
@@ -46,7 +46,7 @@ export class ProfileService {
     }
   }
 
-  private async matchBasedOnProfile(newbie: User) {
+  private async matchBasedOnProfile(newbie: User): Promise<boolean> {
     let bestMatch = {
       simScores: [0, 0],
       id: -1,
@@ -59,7 +59,11 @@ export class ProfileService {
         const fePotUsers = await User.findByProfile('fe');
         const newbieFws = newbie.profile.feProfile.fws;
         const newbieTools = newbie.profile.feProfile.tools;
+        //console.log(fePotUsers);
         for (const fePotUser of fePotUsers) {
+          if (!fePotUser.isOld) {
+            continue;
+          }
           const buddyFws = fePotUser.profile.feProfile.fws;
           const buddyTools = fePotUser.profile.feProfile.tools;
           const simScores = [
@@ -71,8 +75,7 @@ export class ProfileService {
           }
         }
         if (bestMatch.id !== -1) {
-          await this.userService.manualMatch(bestMatch.id, newbie.id);
-          return;
+          return await this.userService.manualMatch(bestMatch.id, newbie.id);
         }
       }
       if (newbie.profile.beProfile) {
@@ -80,6 +83,9 @@ export class ProfileService {
         const newbieFws = newbie.profile.feProfile.fws;
         const newbieLangs = newbie.profile.feProfile.tools;
         for (const bePotUser of bePotUsers) {
+          if (!bePotUser.isOld) {
+            continue;
+          }
           const buddyFws = bePotUser.profile.feProfile.fws;
           const buddyTools = bePotUser.profile.feProfile.tools;
           const simScores = [
@@ -90,13 +96,14 @@ export class ProfileService {
             bestMatch = { simScores, id: bePotUser.id };
           }
         }
+        console.log(bestMatch);
         if (bestMatch.id !== -1) {
-          await this.userService.manualMatch(bestMatch.id, newbie.id);
-          return;
+          return await this.userService.manualMatch(bestMatch.id, newbie.id);
         }
       }
     } catch (err) {
       console.error(err);
+      return false;
     }
   }
 }

@@ -96,4 +96,13 @@ export class UserController {
     const ok = await this.userService.manualMatch(buddyId, newbieId);
     res.status(ok ? HttpStatus.NO_CONTENT : HttpStatus.NOT_MODIFIED).send();
   }
+
+  @RolesPriority(ROLE_PRIORITY.BUDDY)
+  @Patch('toggle-paused')
+  async togglePaused(@Req() request: Request) {
+    const ok = await this.userService.togglePaused(request['user_id']);
+    if (!ok) {
+      throw new InternalServerErrorException();
+    }
+  }
 }

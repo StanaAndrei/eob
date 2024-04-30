@@ -129,4 +129,17 @@ export class UserService {
       return false;
     }
   }
+
+  async togglePaused(id: number): Promise<boolean> {
+    try {
+      const user = await User.findOne({
+        where: { id },
+      });
+      await user.togglePaused();
+      return true;
+    } catch (err) {
+      console.error(err);
+      return false;
+    }
+  }
 }
