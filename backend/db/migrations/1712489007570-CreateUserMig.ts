@@ -71,7 +71,7 @@ export class CreateUserMig1712489007570 implements MigrationInterface {
         columnNames: ['manager_id'],
         referencedColumnNames: ['id'],
         referencedTableName: 'users',
-        onDelete: 'CASCADE',
+        onDelete: 'SET NULL',
         name: 'FK_user_manager',
       }),
     );

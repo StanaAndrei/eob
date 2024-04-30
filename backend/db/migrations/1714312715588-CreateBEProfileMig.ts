@@ -60,7 +60,7 @@ export class CreateBEProfileMig1714312715588 implements MigrationInterface {
         columnNames: ['be_profile_id'],
         referencedColumnNames: ['id'],
         referencedTableName: 'beprofiles',
-        onDelete: 'CASCADE',
+        onDelete: 'SET NULL',
         name: 'FK_beprofile_profile',
       }),
     );

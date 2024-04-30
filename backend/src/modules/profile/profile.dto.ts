@@ -1,4 +1,4 @@
-import { IsNotEmpty, ValidateNested } from 'class-validator';
+import { IsInt, IsNotEmpty, IsOptional, ValidateNested } from 'class-validator';
 import { IndustryType } from './profile.entity';
 import { Type } from 'class-transformer';
 
@@ -32,17 +32,21 @@ export class FEProfileDTO {
   @IsNotEmpty()
   fws: string[];
 
-  @IsNotEmpty()
-  jsLvl: number;
+  @IsInt()
+  @IsOptional()
+  jsLvl?: number;
 
-  @IsNotEmpty()
-  tsLvl: number;
+  @IsInt()
+  @IsOptional()
+  tsLvl?: number;
 
-  @IsNotEmpty()
-  htmlLvl: number;
+  @IsInt()
+  @IsOptional()
+  htmlLvl?: number;
 
-  @IsNotEmpty()
-  cssLvl: number;
+  @IsInt()
+  @IsOptional()
+  cssLvl?: number;
 
   @IsNotEmpty()
   tools: string[];

@@ -35,7 +35,7 @@ export default class UserSeeder implements Seeder {
       createdAt: '2024-04-29 13:13:13',
       managerId: 1,
       buddyId: 2,
-      profileId: 2,
+      //profileId: 2,
     });
   }
 }

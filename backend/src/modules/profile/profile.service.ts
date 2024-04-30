@@ -6,10 +6,12 @@ import { Profile } from './profile.entity';
 import { FEProfile } from './subprofiles/feprofile.entity';
 import { SSProfile } from './subprofiles/ssprofile.entity';
 import { BEProfile } from './subprofiles/beprofile.entity';
-//import { Not } from 'typeorm';
+import { UserService } from '../user/user.service';
 
 @Injectable()
 export class ProfileService {
+  constructor(private readonly userService: UserService) {}
+
   async createProfile(
     profileDTO: ProfileDTO,
     userID: number,
@@ -33,6 +35,9 @@ export class ProfileService {
       profile.ssProfile = ssProfile;
       await profile.save();
       user.profile = profile;
+      if (!user.isOld) {
+        await this.matchBasedOnProfile(user);
+      }
       await user.save();
       return true;
     } catch (err) {
@@ -41,9 +46,55 @@ export class ProfileService {
     }
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   private async matchBasedOnProfile(newbie: User) {
+    let bestMatch = {
+      simScores: [0, 0],
+      id: -1,
+    };
+    type ScoreOfStrArrsTp = (arr1: string[], arr2: string[]) => number;
+    const getScoreOfArr: ScoreOfStrArrsTp = (arr1, arr2) =>
+      arr1.filter((elem: string) => arr2.includes(elem)).length;
     try {
+      if (newbie.profile.feProfile) {
+        const fePotUsers = await User.findByProfile('fe');
+        const newbieFws = newbie.profile.feProfile.fws;
+        const newbieTools = newbie.profile.feProfile.tools;
+        for (const fePotUser of fePotUsers) {
+          const buddyFws = fePotUser.profile.feProfile.fws;
+          const buddyTools = fePotUser.profile.feProfile.tools;
+          const simScores = [
+            getScoreOfArr(newbieFws, buddyFws),
+            getScoreOfArr(newbieTools, buddyTools),
+          ];
+          if (bestMatch.simScores < simScores) {
+            bestMatch = { simScores, id: fePotUser.id };
+          }
+        }
+        if (bestMatch.id !== -1) {
+          await this.userService.manualMatch(bestMatch.id, newbie.id);
+          return;
+        }
+      }
+      if (newbie.profile.beProfile) {
+        const bePotUsers = await User.findByProfile('be');
+        const newbieFws = newbie.profile.feProfile.fws;
+        const newbieLangs = newbie.profile.feProfile.tools;
+        for (const bePotUser of bePotUsers) {
+          const buddyFws = bePotUser.profile.feProfile.fws;
+          const buddyTools = bePotUser.profile.feProfile.tools;
+          const simScores = [
+            getScoreOfArr(newbieFws, buddyFws),
+            getScoreOfArr(newbieLangs, buddyTools),
+          ];
+          if (bestMatch.simScores < simScores) {
+            bestMatch = { simScores, id: bePotUser.id };
+          }
+        }
+        if (bestMatch.id !== -1) {
+          await this.userService.manualMatch(bestMatch.id, newbie.id);
+          return;
+        }
+      }
     } catch (err) {
       console.error(err);
     }

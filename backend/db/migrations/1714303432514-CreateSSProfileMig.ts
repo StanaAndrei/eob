@@ -70,7 +70,7 @@ export class CreateSSProfileMig1714303432514 implements MigrationInterface {
         columnNames: ['ss_profile_id'],
         referencedColumnNames: ['id'],
         referencedTableName: 'ssprofiles',
-        onDelete: 'CASCADE',
+        onDelete: 'SET NULL',
         name: 'FK_ssprofile_profile',
       }),
     );

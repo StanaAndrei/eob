@@ -57,7 +57,7 @@ export class CreateProfileMig1714216601424 implements MigrationInterface {
         columnNames: ['profile_id'],
         referencedColumnNames: ['id'],
         referencedTableName: 'profiles',
-        onDelete: 'CASCADE',
+        onDelete: 'SET NULL',
         name: 'FK_user_profile',
       }),
     );
