@@ -29,21 +29,25 @@ export class CreateFEProfileMig1714312418589 implements MigrationInterface {
             name: 'js_lvl',
             type: 'int',
             isNullable: false,
+            default: 0,
           },
           {
             name: 'ts_lvl',
             type: 'int',
             isNullable: false,
+            default: 0,
           },
           {
             name: 'html_lvl',
             type: 'int',
             isNullable: false,
+            default: 0,
           },
           {
             name: 'css_lvl',
             type: 'int',
             isNullable: false,
+            default: 0,
           },
           {
             name: 'tools',

@@ -45,4 +45,13 @@ export class Profile extends BaseEntity {
   @OneToOne(() => SSProfile)
   @JoinColumn()
   ssProfile: SSProfile;
+
+  @Column()
+  ssProfileId: number;
+
+  @Column()
+  feProfileId: number;
+
+  @Column()
+  beProfileId: number;
 }

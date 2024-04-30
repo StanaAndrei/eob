@@ -26,6 +26,7 @@ export default class UserSeeder implements Seeder {
       password: hashedPassword,
       createdAt: '2020-04-29 13:13:13',
       managerId: 1,
+      profileId: 1,
     });
     await userRepo.insert({
       name: 'andrew3',
@@ -34,6 +35,7 @@ export default class UserSeeder implements Seeder {
       createdAt: '2024-04-29 13:13:13',
       managerId: 1,
       buddyId: 2,
+      profileId: 2,
     });
   }
 }
