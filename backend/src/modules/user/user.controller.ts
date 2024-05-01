@@ -14,7 +14,6 @@ import {
 } from '@nestjs/common';
 import { Request, Response } from 'express';
 import { UserService } from './user.service';
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { UserDTO } from './dtos/user.dto';
 import { AllowAnon } from '../auth/auth.guard';
 import { UserInterceptor } from './user.interceptor';

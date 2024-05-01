@@ -77,9 +77,13 @@ export class User extends BaseEntity {
   @OneToMany(() => User, (user) => user.buddy)
   newbies: User;
 
-  static async findByProfile(profileTp: string): Promise<User[]> {
+  static async findByProfile(
+    profileTp: string,
+    managerId: number,
+  ): Promise<User[]> {
     return await this.createQueryBuilder('user')
       .where('user.paused IS FALSE')
+      .andWhere(`user.managerId=${managerId}`)
       //.andWhere('user.isOld IS TRUE')
       .innerJoinAndSelect('user.profile', 'profile')
       .innerJoinAndSelect(`profile.${profileTp}Profile`, `${profileTp}Profile`)

@@ -56,7 +56,7 @@ export class ProfileService {
       arr1.filter((elem: string) => arr2.includes(elem)).length;
     try {
       if (newbie.profile.feProfile) {
-        const fePotUsers = await User.findByProfile('fe');
+        const fePotUsers = await User.findByProfile('fe', newbie.managerId);
         const newbieFws = newbie.profile.feProfile.fws;
         const newbieTools = newbie.profile.feProfile.tools;
         //console.log(fePotUsers);
@@ -79,7 +79,7 @@ export class ProfileService {
         }
       }
       if (newbie.profile.beProfile) {
-        const bePotUsers = await User.findByProfile('be');
+        const bePotUsers = await User.findByProfile('be', newbie.managerId);
         const newbieFws = newbie.profile.feProfile.fws;
         const newbieLangs = newbie.profile.feProfile.tools;
         for (const bePotUser of bePotUsers) {
