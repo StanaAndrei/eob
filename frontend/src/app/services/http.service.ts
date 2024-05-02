@@ -6,7 +6,7 @@ import { firstValueFrom, Observable } from "rxjs";
     providedIn: 'root'
 })
 export class HttpService {
-    private baseUrl: string = 'localhost:3001/api'
+    private baseUrl: string = 'http://localhost:3001/api'
     private headers: HttpHeaders;
     constructor(private httpClient: HttpClient) {
         this.headers = new HttpHeaders();

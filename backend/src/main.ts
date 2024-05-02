@@ -3,14 +3,16 @@ import { AppModule } from './app.module';
 import { NestExpressApplication } from '@nestjs/platform-express';
 import helmet from 'helmet';
 import { ValidationPipe } from '@nestjs/common';
+import morgan from 'morgan';
 
 async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule);
   app.enableCors({
-    origin: 'http://localhost:4200', // Adjust this to your Angular app's URL
-    methods: 'GET,PUT,POST,DELETE',
-    allowedHeaders: 'Content-Type, Authorization',
+    credentials: false,
+    origin: '*',
+    methods: ['GET', 'POST', 'PATCH', 'DELETE'],
   });
+  app.use(morgan('tiny'));
   app.use(helmet());
   app.setGlobalPrefix('api');
   app.useGlobalPipes(new ValidationPipe());
