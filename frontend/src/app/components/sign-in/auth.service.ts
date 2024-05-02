@@ -1,6 +1,7 @@
 import { Injectable } from "@angular/core";
 import { HttpService } from "../../services/http.service";
 import { LocalStorageService } from "../../services/localstorage.service";
+import { HttpStatusCode } from "@angular/common/http";
 
 @Injectable({
     providedIn: 'root'
@@ -12,12 +13,14 @@ export class AuthService {
         this.bearerToken = localStorageService.getData('authtok');
     }
 
-    login(email: string, password: string) {
-        const res = this.httpService.post('/auth', {
+    async login(email: string, password: string) {
+        const res = await this.httpService.post('/auth', {
             email, password
         });
-        console.log(res);
-        
+        if (res.status !== HttpStatusCode.Ok) {
+            return null;
+        }
+        return res.body;     
     }
 
     get isLoggedIn(): boolean {

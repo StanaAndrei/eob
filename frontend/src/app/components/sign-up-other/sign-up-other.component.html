@@ -1,1 +1,9 @@
 <p>sign-up-other works!</p>
+<form [formGroup]="registerOtherForm" (ngSubmit)="registerOther()">
+
+  <input type="text" id="name" placeholder="name" formControlName="name">
+  <br>
+  <input type="text" id="email" placeholder="email" formControlName="email">
+  <br>
+  <button type="submit">submit!</button>
+</form>

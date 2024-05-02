@@ -28,6 +28,6 @@ export class SignInComponent {
         if (!email || !password) {
             return alert('error!');
         }
-        this.authService.login(email, password);        
+        const res = this.authService.login(email, password);        
     }
 }
