@@ -9,10 +9,10 @@ export default function Nav(): ReturnType<React.FC> {
     <nav className="navbar">
       <ul className="navbar-nav">
         <li className="nav-item">
-          <a href="#" className="nav-link">Home</a>
+          <a href="/home" className="nav-link">Home</a>
         </li>
         <li className="nav-item">
-          <a href="#" className="nav-link">About</a>
+          <a href="/me" className="nav-link">Me</a>
         </li>
         <li className="nav-item">
           <a href="#" className="nav-link">Services</a>

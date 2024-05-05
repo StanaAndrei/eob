@@ -1,0 +1,58 @@
+.card {
+  width: 300px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  overflow: hidden;
+  margin: 20px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.card img {
+  width: 100%;
+  height: auto;
+}
+
+.card-body {
+  padding: 20px;
+}
+
+.card-body h2 {
+  margin-top: 0;
+  font-size: 1.5rem;
+}
+
+.card-body p {
+  margin-bottom: 0;
+  font-size: 1rem;
+}
+
+/* Style the collapsible container */
+.Collapsible {
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  margin-bottom: 16px;
+}
+
+/* Style the header of the collapsible */
+.Collapsible__trigger {
+  cursor: pointer;
+  padding: 10px 20px;
+  background-color: #f0f0f0;
+  border-bottom: 1px solid #ccc;
+}
+
+/* Style the content area of the collapsible */
+.Collapsible__contentInner {
+  padding: 20px;
+  border-top: 1px solid #ccc;
+}
+
+/* Hide the content by default */
+.Collapsible__content {
+  display: none;
+}
+
+/* Show content when the collapsible is open */
+.Collapsible.is-open .Collapsible__content {
+  display: block;
+}
