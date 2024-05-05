@@ -8,6 +8,8 @@ import Collapsible from 'react-collapsible';
 import FeProfile from './SubProfiles/FeProfile';
 import BeProfile from './SubProfiles/BeProfile';
 import SSProfile from './SubProfiles/SSProfile';
+import { Link } from 'react-router-dom';
+import { HttpStatusCode } from 'axios';
 
 function Profile(): ReturnType<React.FC> {
   const { userId } = useParams();
@@ -24,7 +26,20 @@ function Profile(): ReturnType<React.FC> {
     })
   }, [userId])
 
-  return (
+  const togglePaused = (e: React.SyntheticEvent) => {
+    e.preventDefault();
+    axiosAuthInstToSv.patch('/user/toggle-paused').then(res => {
+      if (res.status === HttpStatusCode.Ok) {
+        return window.location.reload();
+      }
+      alert('ERROR!');
+    }).catch(err => {
+      console.error(err);
+      alert('ERROR');
+    })
+  }
+
+  return !userData ? null : (
     <>
       <div className="card">
         <img src={DEFAULT_PROFILE_PIC} alt={''} />
@@ -47,6 +62,12 @@ function Profile(): ReturnType<React.FC> {
         <Collapsible trigger={'Soft Skills Profile'} triggerDisabled={userData?.profile?.ssProfile == null}>
           <SSProfile ssProfile={userData?.profile?.ssProfile as SSProfileI} />
         </Collapsible>
+      </div>
+      <div>
+        <Link to={`/edit-profile/${userId}`} target='_blank'>Edit/Add profile</Link>
+      </div>
+      <div>
+        {userData?.rolePriority === 2 && <button onClick={togglePaused}>Toggle paused!</button> }
       </div>
     </>
   );

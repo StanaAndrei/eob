@@ -12,6 +12,7 @@ import Register from './Pages/Register/Register';
 import Logout from './Pages/Auth/Logout';
 import Profile from './Pages/Profile/Profile';
 import Me from './Pages/Profile/Me';
+import EditProfile from './Pages/EditProfile/EditProfile';
 
 function App(): ReturnType<React.FC> {
 
@@ -20,6 +21,7 @@ function App(): ReturnType<React.FC> {
     <Routes>
 
       <Route path='/home' element={ <Home /> } />
+      <Route path='/edit-profile/:userId' element={ <EditProfile /> } />
       <Route path='/logout' element={ <Logout /> } />
       <Route path='/profile/:userId' element={ <Profile /> } />
       <Route path='/me' element={ <Me /> } />

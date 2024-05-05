@@ -31,7 +31,7 @@ export interface SSProfileI {
 
 export interface Profile {
     xp: number;
-    indType: string;
+    indType: string[];
     feProfile?: FeProfileI;
     beProfile?: BeProfileI;
     ssProfile?: SSProfileI;

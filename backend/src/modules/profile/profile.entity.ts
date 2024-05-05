@@ -5,12 +5,13 @@ import {
   JoinColumn,
   OneToOne,
   PrimaryGeneratedColumn,
+  ValueTransformer,
 } from 'typeorm';
 import { SSProfile } from './subprofiles/ssprofile.entity';
 import { FEProfile } from './subprofiles/feprofile.entity';
 import { BEProfile } from './subprofiles/beprofile.entity';
 
-export enum IndustryType {
+export enum IndustryTypePredef {
   TECH,
   HEALTH,
   FINANCE,
@@ -18,6 +19,19 @@ export enum IndustryType {
   RETAIL,
   OTHER,
 }
+
+export type IndustryType = IndustryTypePredef | string;
+
+const myFieldTransformer: ValueTransformer = {
+  to: (value: IndustryType[]) => {
+    // Convert array to string for database storage
+    return value?.join(',');
+  },
+  from: (value: string) => {
+    // Convert string from database to array
+    return value?.split(',') as IndustryType[];
+  },
+};
 
 @Entity('profiles')
 export class Profile extends BaseEntity {
@@ -28,11 +42,11 @@ export class Profile extends BaseEntity {
   xp: number;
 
   @Column({
-    type: 'enum',
-    enum: IndustryType,
+    type: 'text',
+    transformer: myFieldTransformer,
     nullable: false,
   })
-  indType: IndustryType;
+  indType: IndustryType[];
 
   @OneToOne(() => FEProfile)
   @JoinColumn()

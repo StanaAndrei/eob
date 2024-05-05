@@ -27,9 +27,7 @@ export class CreateProfileMig1714216601424 implements MigrationInterface {
           },
           {
             name: 'ind_type',
-            type: 'enum',
-            enum: ['TECH', 'HEALTH', 'FINANCE', 'EDU', 'RETAIL', 'OTHER'],
-            enumName: 'IndustryType',
+            type: 'text',
             isNullable: false,
           },
           {

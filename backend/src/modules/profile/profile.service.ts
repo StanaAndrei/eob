@@ -23,22 +23,28 @@ export class ProfileService {
       if (user.profile) {
         return false;
       }
-      const feProfile = plainToInstance(FEProfile, profileDTO.feProfile);
-      const beProfile = plainToInstance(BEProfile, profileDTO.beProfile);
-      const ssProfile = plainToInstance(SSProfile, profileDTO.ssProfile);
-      await feProfile?.save();
-      await beProfile?.save();
-      await ssProfile?.save();
-      const profile = plainToInstance(Profile, profileDTO);
-      profile.feProfile = feProfile;
-      profile.beProfile = beProfile;
-      profile.ssProfile = ssProfile;
-      await profile.save();
-      user.profile = profile;
-      await user.save();
-      if (!user.isOld) {
-        return await this.matchBasedOnProfile(user);
-      }
+      await User.getRepository().manager.transaction(
+        async (transactionalEntityManager) => {
+          const feProfile = plainToInstance(FEProfile, profileDTO.feProfile);
+          const beProfile = plainToInstance(BEProfile, profileDTO.beProfile);
+          const ssProfile = plainToInstance(SSProfile, profileDTO.ssProfile);
+
+          await transactionalEntityManager.save(FEProfile, feProfile);
+          await transactionalEntityManager.save(BEProfile, beProfile);
+          await transactionalEntityManager.save(SSProfile, ssProfile);
+
+          const profile = plainToInstance(Profile, profileDTO);
+          profile.feProfile = feProfile;
+          profile.beProfile = beProfile;
+          profile.ssProfile = ssProfile;
+
+          await transactionalEntityManager.save(Profile, profile);
+
+          user.profile = profile;
+          await transactionalEntityManager.save(User, user);
+        },
+      );
+      await this.matchBasedOnProfile(user);
       return true;
     } catch (err) {
       console.error(err);
@@ -46,7 +52,42 @@ export class ProfileService {
     }
   }
 
-  private async matchBasedOnProfile(newbie: User): Promise<boolean> {
+  async updateProfile(
+    profileDTO: ProfileDTO,
+    userId: number,
+  ): Promise<boolean> {
+    try {
+      const user = await User.findOne({
+        where: { id: userId },
+      });
+      let { profile } = user;
+      await Profile.getRepository().manager.transaction(
+        async (transactionalEntityManager) => {
+          const feProfile = plainToInstance(FEProfile, profileDTO.feProfile);
+          const beProfile = plainToInstance(BEProfile, profileDTO.beProfile);
+          const ssProfile = plainToInstance(SSProfile, profileDTO.ssProfile);
+
+          await transactionalEntityManager.save(FEProfile, feProfile);
+          await transactionalEntityManager.save(BEProfile, beProfile);
+          await transactionalEntityManager.save(SSProfile, ssProfile);
+
+          profile = plainToInstance(Profile, profileDTO);
+          profile.feProfile = feProfile;
+          profile.beProfile = beProfile;
+          profile.ssProfile = ssProfile;
+
+          await transactionalEntityManager.save(Profile, profile);
+        },
+      );
+      await this.matchBasedOnProfile(user);
+      return true;
+    } catch (err) {
+      console.error(err);
+      return false;
+    }
+  }
+
+  private async matchBasedOnProfile(targetUser: User): Promise<boolean> {
     let bestMatch = {
       simScores: [0, 0],
       id: -1,
@@ -55,13 +96,13 @@ export class ProfileService {
     const getScoreOfArr: ScoreOfStrArrsTp = (arr1, arr2) =>
       arr1.filter((elem: string) => arr2.includes(elem)).length;
     try {
-      if (newbie.profile.feProfile) {
-        const fePotUsers = await User.findByProfile('fe', newbie.managerId);
-        const newbieFws = newbie.profile.feProfile.fws;
-        const newbieTools = newbie.profile.feProfile.tools;
+      if (targetUser.profile.feProfile) {
+        const fePotUsers = await User.findByProfile('fe', targetUser.managerId);
+        const newbieFws = targetUser.profile.feProfile.fws;
+        const newbieTools = targetUser.profile.feProfile.tools;
         //console.log(fePotUsers);
         for (const fePotUser of fePotUsers) {
-          if (!fePotUser.isOld) {
+          if (fePotUser.isOld !== targetUser.isOld) {
             continue;
           }
           const buddyFws = fePotUser.profile.feProfile.fws;
@@ -75,15 +116,25 @@ export class ProfileService {
           }
         }
         if (bestMatch.id !== -1) {
-          return await this.userService.manualMatch(bestMatch.id, newbie.id);
+          if (!targetUser.isOld) {
+            return await this.userService.manualMatch(
+              bestMatch.id,
+              targetUser.id,
+            );
+          } else {
+            return await this.userService.manualMatch(
+              targetUser.id,
+              bestMatch.id,
+            );
+          }
         }
       }
-      if (newbie.profile.beProfile) {
-        const bePotUsers = await User.findByProfile('be', newbie.managerId);
-        const newbieFws = newbie.profile.feProfile.fws;
-        const newbieLangs = newbie.profile.feProfile.tools;
+      if (targetUser.profile.beProfile) {
+        const bePotUsers = await User.findByProfile('be', targetUser.managerId);
+        const newbieFws = targetUser.profile.feProfile.fws;
+        const newbieLangs = targetUser.profile.feProfile.tools;
         for (const bePotUser of bePotUsers) {
-          if (!bePotUser.isOld) {
+          if (bePotUser.isOld !== targetUser.isOld) {
             continue;
           }
           const buddyFws = bePotUser.profile.feProfile.fws;
@@ -96,13 +147,25 @@ export class ProfileService {
             bestMatch = { simScores, id: bePotUser.id };
           }
         }
-        console.log(bestMatch);
+        //console.log(bestMatch);
         if (bestMatch.id !== -1) {
-          return await this.userService.manualMatch(bestMatch.id, newbie.id);
+          if (!targetUser.isOld) {
+            return await this.userService.manualMatch(
+              bestMatch.id,
+              targetUser.id,
+            );
+          } else {
+            return await this.userService.manualMatch(
+              targetUser.id,
+              bestMatch.id,
+            );
+          }
         }
       }
     } catch (err) {
       console.error(err);
+      return false;
+    } finally {
       return false;
     }
   }
