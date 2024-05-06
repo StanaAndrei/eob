@@ -13,6 +13,7 @@ import Logout from './Pages/Auth/Logout';
 import Profile from './Pages/Profile/Profile';
 import Me from './Pages/Profile/Me';
 import EditProfile from './Pages/EditProfile/EditProfile';
+import RegisterOther from './Pages/RegisterOther/RegisterOther';
 
 function App(): ReturnType<React.FC> {
 
@@ -25,6 +26,7 @@ function App(): ReturnType<React.FC> {
       <Route path='/logout' element={ <Logout /> } />
       <Route path='/profile/:userId' element={ <Profile /> } />
       <Route path='/me' element={ <Me /> } />
+      <Route path='/mk-other' element={ <RegisterOther /> } />
 
 
       <Route path='/login' element={ <Login /> } />

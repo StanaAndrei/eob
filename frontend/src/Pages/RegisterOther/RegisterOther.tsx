@@ -1,4 +1,5 @@
 import React from 'react';
+import { axiosAuthInstToSv } from '../../network/server.net';
 
 function RegisterOther(): ReturnType<React.FC> {
 
@@ -10,8 +11,13 @@ function RegisterOther(): ReturnType<React.FC> {
     };
     const email = target.email.value;
     const name = target.name.value;
-    console.log(email, name);
-    
+    axiosAuthInstToSv.post('/user/other', {
+      email, name
+    }).then(() => {
+      alert('OK')
+    }).catch(() => {
+      alert('ERROR');
+    })
   }
 
   return (
@@ -19,7 +25,7 @@ function RegisterOther(): ReturnType<React.FC> {
       <form onSubmit={handleSubmit}>
         <input placeholder='name' type="text" id='name' /><br />
         <input placeholder='email' type="text" id='email' /><br />
-        <button type='submit'></button>
+        <button type='submit'>submit</button>
       </form>
     </div>
   );
