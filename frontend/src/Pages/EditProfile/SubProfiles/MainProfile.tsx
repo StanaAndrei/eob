@@ -11,9 +11,10 @@ const options: Option[] = [
   { label: 'Other(complete)', value: 'OTHER' },
 ];
 
-function MainProfile({ profile, setProfile }: { 
+function MainProfile({ profile, setUserProfile, setStack }: { 
   profile: Profile, 
-  setProfile: React.Dispatch<React.SetStateAction<Profile | null>> 
+  setUserProfile: React.Dispatch<React.SetStateAction<Profile | null>>,
+  setStack: React.Dispatch<React.SetStateAction<string>>,
 }): ReturnType<React.FC> {
   
   const [selected, setSelected] = React.useState<Option[]>(() => profile.indType.map(
@@ -21,14 +22,14 @@ function MainProfile({ profile, setProfile }: {
   ));
 
   React.useEffect(() => {
-    setProfile((prevState: Profile | null): Profile | null => {
+    setUserProfile((prevState: Profile | null): Profile | null => {
       if (prevState == null) {
         return null;
       }
       prevState.indType = selected.map(opt => opt.value);      
       return prevState;
     })
-  }, [selected, setProfile])
+  }, [selected, setUserProfile])
   
 
   React.useEffect(() => {
@@ -49,7 +50,7 @@ function MainProfile({ profile, setProfile }: {
         <label>xp:</label>
         <input type="number" defaultValue={profile.xp} 
           onChange={(e: React.ChangeEvent<HTMLInputElement>) => 
-            setProfile((prevState: Profile | null): Profile => ({ ...prevState!, xp: Number(e.target.value) }))
+            setUserProfile((prevState: Profile | null): Profile => ({ ...prevState!, xp: Number(e.target.value) }))
           }
         /><br />
         <MultiSelect 
@@ -58,7 +59,14 @@ function MainProfile({ profile, setProfile }: {
           onChange={setSelected} labelledBy='Industry type:' 
           hasSelectAll={false}
         /> <br />
-        
+        <p>stack:</p>
+        <div
+          onChange={(e: React.ChangeEvent<HTMLInputElement>) => setStack(e.target.value)}
+        >
+          <input type="radio" value={'FE'} name='stack' /> Frontend <br />
+          <input type="radio" value={'BE'} name='stack' /> Backend <br />
+          <input type="radio" value={'BEFE'} name='stack' /> Both <br />
+        </div>
       </form>
     </div>
   );
