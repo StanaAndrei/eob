@@ -3,7 +3,6 @@ import MainProfile from './SubProfiles/MainProfile';
 import { axiosAuthInstToSv } from './../../network/server.net';
 import { useParams } from 'react-router';
 import { Profile } from './../../models/user.model';
-import MultiStep from 'react-multistep'
 
 function EditProfile(): ReturnType<React.FC> {
   
@@ -11,14 +10,8 @@ function EditProfile(): ReturnType<React.FC> {
 
   const [userProfile, setUserProfile] = React.useState<Profile | null>(null);
   const [stack, setStack] = React.useState<string>('');
-  const [forms, setForms] = React.useState<Array<React.FC<{ onNext: () => void; onPrevious: () => void; }>>>(() => {
-    // Initialize forms based on userProfile or any other data
-    if (userProfile === null) {
-      return [];
-    } else {
-      return [<MainProfile profile={userProfile as Profile} setUserProfile={setUserProfile} setStack={setStack} />];
-    }
-  });
+  const [forms, setForms] = React.useState<JSX.Element[]>([]);
+  
   //const [currId, setCurrId] = React.useState<number>(0);
 
   React.useEffect(() => {
@@ -43,6 +36,13 @@ function EditProfile(): ReturnType<React.FC> {
     if (userProfile == null) {
       return;
     }
+    setForms([
+      <MainProfile 
+        profile={userProfile as Profile} 
+        setUserProfile={setUserProfile} 
+        setStack={setStack} 
+      />
+    ]);
   }, [userProfile])
 
   React.useEffect(() => {    
@@ -53,18 +53,21 @@ function EditProfile(): ReturnType<React.FC> {
       alert('ERROR')
     })
   }, [userId])
+  const [formIndex, setFormIndex] = React.useState<number>(0);
 
   return !userProfile ? null : (
     <div>
-      {/*<MultiStep 
-        activeStep={0}
-        steps={forms.map((FormComponent, index) => ({
-          name: `Step ${index + 1}`,
-          component: <FormComponent onNext={() => ({})} onPrevious={() => ({})} />,
-        }))}
-      />*/}
+      {forms[formIndex]}
+      <div>
+        <hr />
+        <button>prev</button>
+        <button>next</button>
+      </div>
     </div>
   );
 }
 
 export default EditProfile;
+/**
+ * <MainProfile profile={userProfile as Profile} setUserProfile={setUserProfile} setStack={setStack} />
+ */
