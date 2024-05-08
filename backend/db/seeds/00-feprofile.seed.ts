@@ -18,6 +18,10 @@ export default class FeProfileSeeder implements Seeder {
     await feprofileRepo.insert({
       fws: ['React'],
       tools: ['babel'],
+      jsLvl: 2,
+      tsLvl: 4,
+      htmlLvl: 3,
+      cssLvl: 3,
     });
   }
 }
