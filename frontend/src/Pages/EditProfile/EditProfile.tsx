@@ -2,7 +2,7 @@ import React from 'react';
 import MainProfile from './SubProfiles/MainProfile';
 import { axiosAuthInstToSv } from './../../network/server.net';
 import { useParams } from 'react-router';
-import { FeProfileI, Profile } from './../../models/user.model';
+import { BeProfileI, FeProfileI, Profile } from './../../models/user.model';
 import FeProfile from './SubProfiles/FeProfile';
 import BeProfile from './SubProfiles/BeProfile';
 
@@ -67,7 +67,7 @@ function EditProfile(): ReturnType<React.FC> {
   return !userProfile ? null : (
     <div>
       {/*forms[formIndex]*/}
-      <FeProfile feProfile={userProfile.feProfile as FeProfileI} />
+      <BeProfile beProfile={userProfile.beProfile as  BeProfileI} />
       <div>
         <hr />
         <button>prev</button>
@@ -79,6 +79,6 @@ function EditProfile(): ReturnType<React.FC> {
 
 export default EditProfile;
 /**
- * 
+ *  <FeProfile feProfile={userProfile.feProfile as FeProfileI} />
  * <MainProfile profile={userProfile as Profile} setUserProfile={setUserProfile} setStack={setStack} />
  */
