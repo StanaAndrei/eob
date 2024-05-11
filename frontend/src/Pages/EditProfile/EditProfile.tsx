@@ -72,12 +72,22 @@ function EditProfile(): ReturnType<React.FC> {
     }
   }
 
+  const goBack = () => {
+    let nxtId = formIndex - 1;
+    while (nxtId >= 0 && forms[nxtId].type === React.Fragment) {      
+      nxtId--;
+    }
+    if (nxtId >= 0) {
+      setFormIndex(nxtId);
+    }
+  }
+
   return !userProfile ? null : (
     <div>
       {forms[formIndex]}
       <div>
         <hr />
-        <button>prev</button>
+        <button onClick={goBack}>prev</button>
         <button onClick={goForward}>next</button>
       </div>
     </div>
@@ -85,8 +95,3 @@ function EditProfile(): ReturnType<React.FC> {
 }
 
 export default EditProfile;
-/**
- * <BeProfile beProfile={userProfile.beProfile as  BeProfileI} />
- *  <FeProfile feProfile={userProfile.feProfile as FeProfileI} />
- * <MainProfile profile={userProfile as Profile} setUserProfile={setUserProfile} setStack={setStack} />
- */

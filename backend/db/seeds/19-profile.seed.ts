@@ -14,6 +14,7 @@ export default class ProfileSeeder implements Seeder {
     await profileRepo.insert({
       feProfileId: 1,
       beProfileId: 1,
+      ssProfileId: 1,
       xp: 5,
       indType: ['TECH', 'HEALTH'],
     });

@@ -3,21 +3,27 @@ import { SSProfileI } from '../../../models/user.model';
 
 function SSProfile({ ssProfile }: { ssProfile: SSProfileI }): ReturnType<React.FC> {
 
+  const handleCommStyleCh = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { value, name } = e.target;
+    console.log(value, name);
+    
+  }
+
   return (
     <div>
       <h4>Communication style:</h4><br />
-      <div onChange={undefined}>
-        <input type="radio" name='comm' /> Assertive <br />
-        <input type="radio" name='comm' /> Passive <br />
-        <input type="radio" name='comm' /> Aggressive <br />
-        <input type="radio" name='comm' /> Collaborative <br />
-        <input type="radio" name='comm' /> Other: <input type="text" />
+      <div onChange={handleCommStyleCh}>
+        <input type="radio" value={'Assertive'} name='comm' /> Assertive <br />
+        <input type="radio" value={'Passive'} name='comm' /> Passive <br />
+        <input type="radio" value={'Aggressive'} name='comm' /> Aggressive <br />
+        <input type="radio" value={'Collaborative'} name='comm' /> Collaborative <br />
+        <input type="radio" value={'other'} name='comm' /> Other: <input type="text" />
       </div>
       <div onChange={undefined}>
-        <input type="radio" name='confhand' /> Assertive <br />
-        <input type="radio" name='confhand' /> Passive <br />
-        <input type="radio" name='confhand' /> Aggressive <br />
-        <input type="radio" name='confhand' /> Collaborative <br />
+        <input type="radio" name='confhand' /> Avoidance <br />
+        <input type="radio" name='confhand' /> Confrontation <br />
+        <input type="radio" name='confhand' /> Compromise <br />
+        <input type="radio" name='confhand' /> Collaboration <br />
         <input type="radio" name='confhand' /> Other: <input type="text" />
       </div>
       <h4>Rate your communication skills:</h4>
@@ -34,33 +40,27 @@ function SSProfile({ ssProfile }: { ssProfile: SSProfileI }): ReturnType<React.F
         <tbody>
           <tr>
             <th>Listening:</th>
-            <div>
               <td><input value={1} type="radio" name='listening' /></td>
               <td><input value={2} type="radio" name='listening' /></td>
               <td><input value={3} type="radio" name='listening' /></td>
               <td><input value={4} type="radio" name='listening' /></td>
               <td><input value={5} type="radio" name='listening' /></td>
-            </div>
           </tr>
           <tr>
             <th>Verbal:</th>
-            <div>
               <td><input value={1} type="radio" name='verbal' /></td>
               <td><input value={2} type="radio" name='verbal' /></td>
               <td><input value={3} type="radio" name='verbal' /></td>
               <td><input value={4} type="radio" name='verbal' /></td>
               <td><input value={5} type="radio" name='verbal' /></td>
-            </div>
           </tr>
           <tr>
             <td>Written:</td>
-            <div>
               <td><input value={1} type="radio" name='written' /></td>
               <td><input value={2} type="radio" name='written' /></td>
               <td><input value={3} type="radio" name='written' /></td>
               <td><input value={4} type="radio" name='written' /></td>
               <td><input value={5} type="radio" name='written' /></td>
-            </div>
           </tr>
         </tbody>
       </table>
@@ -78,33 +78,27 @@ function SSProfile({ ssProfile }: { ssProfile: SSProfileI }): ReturnType<React.F
         <tbody>
           <tr>
             <td>Collaborating:</td>
-            <div>
               <td><input value={1} type="radio" name='collab' /></td>
               <td><input value={2} type="radio" name='collab' /></td>
               <td><input value={3} type="radio" name='collab' /></td>
               <td><input value={4} type="radio" name='collab' /></td>
               <td><input value={5} type="radio" name='collab' /></td>
-            </div>
           </tr>
           <tr>
             <td>Conflict resolution:</td>
-            <div>
               <td><input value={1} type="radio" name='confres' /></td>
               <td><input value={2}  type="radio" name='confres' /></td>
               <td><input value={3}  type="radio" name='confres' /></td>
               <td><input value={4}  type="radio" name='confres' /></td>
               <td><input value={5}  type="radio" name='confres' /></td>
-            </div>
           </tr>
           <tr>
             <td>Leadership:</td>
-            <div>
               <td><input value={1} type="radio" name='leadership' /></td>
               <td><input value={2} type="radio" name='leadership' /></td>
               <td><input value={3} type="radio" name='leadership' /></td>
               <td><input value={4} type="radio" name='leadership' /></td>
               <td><input value={5} type="radio" name='leadership' /></td>
-            </div>
           </tr>
         </tbody>
       </table>
