@@ -1,83 +1,83 @@
 import React from 'react';
-import { FeProfileI } from '../../../models/user.model';
+import { FeProfileI, Profile } from '../../../models/user.model';
+import { doDiff, doInter } from '../../../utils/arrset';
 
-function FeProfile({ feProfile }: { feProfile: FeProfileI }): ReturnType<React.FC> {
+const fwsArr = ['React', 'Ng', 'Vue'];
 
-  const [checkboxesState, setCheckboxesState] = React.useState({
-    reactChecked: feProfile.fws.includes('React'),
-    ngChecked: feProfile.fws.includes('Ng'),
-    vueChecked: feProfile.fws.includes('Vue'),
-    otherChecked: !(feProfile.fws.includes('React') || feProfile.fws.includes('Ng') || feProfile.fws.includes('Vue')),
-    npmyarnChecked: feProfile.tools.includes('npmyarn'),
-    webpackChecked: feProfile.tools.includes('webpack'),
-    ggChecked: feProfile.tools.includes('gg'),
-    babelChecked: feProfile.tools.includes('babel'),
-  });
-  const [fws, setFws] = React.useState<string[]>([]);
-  const [tools, setTools] = React.useState<string[]>([]);
+function FeProfile({ feProfile, setNewUserProfile }: { 
+  feProfile: FeProfileI,
+  setNewUserProfile: React.Dispatch<React.SetStateAction<Profile | undefined>>,
+ }): ReturnType<React.FC> {
 
-  const handleToolChange = (e: React.SyntheticEvent<HTMLInputElement>, isChecked: boolean) => {
-    const { value } = e.target as HTMLInputElement;
-    if (isChecked) {
-      setTools(prev => {
-        const aux = [...prev];
-        aux.push(value);
-        return aux;
-      })
-    } else {
-      setTools(prev => {
-        let aux = [...prev];
-        aux = aux.filter(e => e !== value);
-        return aux;
-      });
-    }
-  }
+  const [newFeProfile, setnewFeProfile] = React.useState<FeProfileI>(feProfile);
+  const [otherChecked, setOtherChecked] = React.useState<boolean>(
+    doDiff<string>(feProfile.fws, fwsArr).length > 0
+  );
 
-  const handleFwChange = (e: React.SyntheticEvent<HTMLInputElement>, isChecked: boolean) => {
-    const { value } = e.target as HTMLInputElement;
-    if (isChecked) {
-      setFws(prev => {
-        const aux = [...prev];
-        aux.push(value);
-        return aux;
-      })
-    } else {
-      setFws(prev => {
-        let aux = [...prev];
-        aux = aux.filter(e => e !== value);
-        return aux;
-      });
-    }
-  }
-
-  const handleCheckboxChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, checked } = e.target;
-    setCheckboxesState(prevState => ({
+  const handleCBChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { value, name } = e.target;
+    setnewFeProfile((prevState: FeProfileI) => ({
       ...prevState,
-      [name]: checked,
+      [name]: [...prevState[name as keyof FeProfileI] as string[], value],
     }));
   };
+
+  console.log(feProfile.fws);
+  
+  const handleInpBlur = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { value, name } = e.target;
+    setnewFeProfile((prevState: FeProfileI) => ({
+      ...prevState,
+      [name]: [...prevState[name as keyof FeProfileI] as string[], ...value.split(',')],
+    }));
+  };
+
+  const handleRadioChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { value, name } = e.target;
+    setnewFeProfile(prevState => ({
+      ...prevState,
+      [name]: Number(value)
+    }))
+  }
+
+  React.useEffect(() => {
+    setNewUserProfile(prevState => ({
+      ...(prevState || {}),
+      feProfile: {...newFeProfile},
+    }))
+  }, [setNewUserProfile, newFeProfile])
+
+  React.useEffect(() => {
+    if (!otherChecked) {
+      setnewFeProfile(prevState => ({
+        ...prevState,
+        fws: doInter<string>(fwsArr, feProfile.fws)
+      }));
+    }
+  }, [otherChecked, feProfile])
 
   return (
     <div>
       <h4>Frameworks:</h4>
       <label>
-        <input name="reactChecked" type="checkbox" checked={checkboxesState.reactChecked} onChange={handleCheckboxChange} />
+        <input value={'React'} name='fws' type="checkbox" defaultChecked={newFeProfile.fws.includes('React')} onChange={handleCBChange} />
         React
       </label><br />
       <label>
-        <input name="ngChecked" type="checkbox" checked={checkboxesState.ngChecked} onChange={handleCheckboxChange} />
+        <input value={'Ng'} name='fws' type="checkbox" defaultChecked={newFeProfile.fws.includes('Ng')} onChange={handleCBChange} />
         Angular
       </label><br />
       <label>
-        <input name="vueChecked" type="checkbox" checked={checkboxesState.vueChecked} onChange={handleCheckboxChange} />
+        <input value={'Vue'} name='fws' type="checkbox" defaultChecked={newFeProfile.fws.includes('Vue')} onChange={handleCBChange} />
         Vue
       </label><br />
       <label>
-        <input name="otherChecked" type="checkbox" checked={checkboxesState.otherChecked} onChange={handleCheckboxChange} />
+        <input  type="checkbox" checked={otherChecked} onChange={() => setOtherChecked(prev => !prev)} />
         Other:
       </label>
-      <input type="text" disabled={!checkboxesState.otherChecked} /><br />
+      <input type="text" disabled={!otherChecked} name='fws' onBlur={handleInpBlur} 
+        defaultValue={!otherChecked ? '' : doDiff<string>(feProfile.fws, fwsArr).join(',')}
+      /><br />
       <hr />
       <h4>Level of:</h4>
       <table>
@@ -94,53 +94,53 @@ function FeProfile({ feProfile }: { feProfile: FeProfileI }): ReturnType<React.F
         <tbody>
           <tr>
             <td>Javascript:</td>
-            <td><input defaultChecked={feProfile.jsLvl === 1} type="radio" name='jsLvl' /></td>
-            <td><input defaultChecked={feProfile.jsLvl === 2} type="radio" name='jsLvl' /></td>
-            <td><input defaultChecked={feProfile.jsLvl === 3} type="radio" name='jsLvl' /></td>
-            <td><input defaultChecked={feProfile.jsLvl === 4} type="radio" name='jsLvl' /></td>
-            <td><input defaultChecked={feProfile.jsLvl === 5} type="radio" name='jsLvl' /></td>
+            <td><input value={1} defaultChecked={feProfile.jsLvl === 1} type="radio" name='jsLvl' onChange={handleRadioChange} /></td>
+            <td><input value={2}  defaultChecked={feProfile.jsLvl === 2} type="radio" name='jsLvl' onChange={handleRadioChange} /></td>
+            <td><input value={3}  defaultChecked={feProfile.jsLvl === 3} type="radio" name='jsLvl' onChange={handleRadioChange} /></td>
+            <td><input value={4}  defaultChecked={feProfile.jsLvl === 4} type="radio" name='jsLvl' onChange={handleRadioChange} /></td>
+            <td><input value={5}  defaultChecked={feProfile.jsLvl === 5} type="radio" name='jsLvl' onChange={handleRadioChange} /></td>
           </tr>
           <tr>
             <td>Typescript:</td>
-            <td><input defaultChecked={feProfile.tsLvl === 1} type="radio" name='tsLvl' /></td>
-            <td><input defaultChecked={feProfile.tsLvl === 2} type="radio" name='tsLvl' /></td>
-            <td><input defaultChecked={feProfile.tsLvl === 3} type="radio" name='tsLvl' /></td>
-            <td><input defaultChecked={feProfile.tsLvl === 4} type="radio" name='tsLvl' /></td>
-            <td><input defaultChecked={feProfile.tsLvl === 5} type="radio" name='tsLvl' /></td>
+            <td><input value={1}  defaultChecked={feProfile.tsLvl === 1} type="radio" name='tsLvl' onChange={handleRadioChange} /></td>
+            <td><input value={2}  defaultChecked={feProfile.tsLvl === 2} type="radio" name='tsLvl' onChange={handleRadioChange} /></td>
+            <td><input value={3}  defaultChecked={feProfile.tsLvl === 3} type="radio" name='tsLvl' onChange={handleRadioChange} /></td>
+            <td><input value={4}  defaultChecked={feProfile.tsLvl === 4} type="radio" name='tsLvl' onChange={handleRadioChange} /></td>
+            <td><input value={5}  defaultChecked={feProfile.tsLvl === 5} type="radio" name='tsLvl' onChange={handleRadioChange} /></td>
           </tr>
           <tr>
             <td>HTML:</td>
-            <td><input defaultChecked={feProfile.htmlLvl === 1} type="radio" name='htmlLvl' /></td>
-            <td><input defaultChecked={feProfile.htmlLvl === 2} type="radio" name='htmlLvl' /></td>
-            <td><input defaultChecked={feProfile.htmlLvl === 3} type="radio" name='htmlLvl' /></td>
-            <td><input defaultChecked={feProfile.htmlLvl === 4} type="radio" name='htmlLvl' /></td>
-            <td><input defaultChecked={feProfile.htmlLvl === 5} type="radio" name='htmlLvl' /></td>
+            <td><input value={1}  defaultChecked={feProfile.htmlLvl === 1} type="radio" name='htmlLvl' onChange={handleRadioChange} /></td>
+            <td><input value={2}  defaultChecked={feProfile.htmlLvl === 2} type="radio" name='htmlLvl' onChange={handleRadioChange} /></td>
+            <td><input value={3}  defaultChecked={feProfile.htmlLvl === 3} type="radio" name='htmlLvl' onChange={handleRadioChange} /></td>
+            <td><input value={4}  defaultChecked={feProfile.htmlLvl === 4} type="radio" name='htmlLvl' onChange={handleRadioChange} /></td>
+            <td><input value={5}  defaultChecked={feProfile.htmlLvl === 5} type="radio" name='htmlLvl' onChange={handleRadioChange} /></td>
           </tr>
           <tr>
             <td>Css:</td>
-            <td><input defaultChecked={feProfile.cssLvl === 1} type="radio" name='cssLvl' /></td>
-            <td><input defaultChecked={feProfile.cssLvl === 2} type="radio" name='cssLvl' /></td>
-            <td><input defaultChecked={feProfile.cssLvl === 3} type="radio" name='cssLvl' /></td>
-            <td><input defaultChecked={feProfile.cssLvl === 4} type="radio" name='cssLvl' /></td>
-            <td><input defaultChecked={feProfile.cssLvl === 5} type="radio" name='cssLvl' /></td>
+            <td><input value={1}  defaultChecked={feProfile.cssLvl === 1} type="radio" name='cssLvl' onChange={handleRadioChange} /></td>
+            <td><input value={2}  defaultChecked={feProfile.cssLvl === 2} type="radio" name='cssLvl' onChange={handleRadioChange} /></td>
+            <td><input value={3}  defaultChecked={feProfile.cssLvl === 3} type="radio" name='cssLvl' onChange={handleRadioChange} /></td>
+            <td><input value={4}  defaultChecked={feProfile.cssLvl === 4} type="radio" name='cssLvl' onChange={handleRadioChange} /></td>
+            <td><input value={5}  defaultChecked={feProfile.cssLvl === 5} type="radio" name='cssLvl' onChange={handleRadioChange} /></td>
           </tr>
         </tbody>
       </table>
       <h4>Tools:</h4>
       <label>
-        <input name="npmyarnChecked" type="checkbox" checked={checkboxesState.npmyarnChecked} onChange={handleCheckboxChange} />
+        <input name="tools" value={'Npmyarn'} type="checkbox" defaultChecked={feProfile.tools.includes('Npmyarn')} onChange={handleCBChange} />
         NPM/Yarn
       </label><br />
       <label>
-        <input name="webpackChecked" type="checkbox" checked={checkboxesState.webpackChecked} onChange={handleCheckboxChange} />
+        <input name="tools" value={'Webpack'} type="checkbox" defaultChecked={feProfile.tools.includes('Webpack')} onChange={handleCBChange} />
         Webpack
       </label><br />
       <label>
-        <input name="ggChecked" type="checkbox" checked={checkboxesState.ggChecked} onChange={handleCheckboxChange} />
+        <input name="tools" value={'Gg'} type="checkbox" defaultChecked={feProfile.tools.includes('Gg')} onChange={handleCBChange} />
         Grunt/Gulp
       </label><br />
       <label>
-        <input name="babelChecked" type="checkbox" checked={checkboxesState.babelChecked} onChange={handleCheckboxChange} />
+        <input name="tools" value={'Babel'} type="checkbox" defaultChecked={feProfile.tools.includes('Babel')} onChange={handleCBChange} />
         Babel
       </label><br />
     </div>

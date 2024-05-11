@@ -1,11 +1,14 @@
 import React from 'react';
-import { BeProfileI } from '../../../models/user.model';
-import { doDiff } from '../../../utils/arr-diff';
+import { BeProfileI, Profile } from '../../../models/user.model';
+import { doDiff, doInter } from '../../../utils/arrset';
 const fwArr = ['Node', 'Django', 'Ror', 'Spring', '.net'];
 const plArr = ['Java', 'Python', 'Ruby', 'Php', 'Cs'];
 
 
-function BeProfile({ beProfile }: {beProfile: BeProfileI}): ReturnType<React.FC> {
+function BeProfile({ beProfile, setNewUserProfile }: {
+  beProfile: BeProfileI,
+  setNewUserProfile: React.Dispatch<React.SetStateAction<Profile | undefined>>,
+}): ReturnType<React.FC> {
 
   const [nodeChecked] = React.useState<boolean>(beProfile.fws.includes('Node'));
   const [djangoChecked] = React.useState<boolean>(beProfile.fws.includes('Django'));
@@ -22,16 +25,16 @@ function BeProfile({ beProfile }: {beProfile: BeProfileI}): ReturnType<React.FC>
   const [otherPlChecked, setOtherPlChecked] = React.useState<boolean>(() => doDiff<string>(beProfile.plangs, plArr).length > 0);
 
 
-  const [beProfState, setbeProfState] = React.useState<BeProfileI>({
-    fws: beProfile.fws,
-    plangs: beProfile.plangs,
-    sqlLvl: beProfile.sqlLvl,
-    kuberLvl: beProfile.kuberLvl,
-    dockerLvl: beProfile.dockerLvl,
-    awsAzureGcpLvl: beProfile.awsAzureGcpLvl,
-  });
+  const [newBeProfState, setnewBeProfState] = React.useState<BeProfileI>(beProfile);
   const otherFwRef: React.LegacyRef<HTMLInputElement> = React.useRef(null);
   const otherPlRef: React.LegacyRef<HTMLInputElement> = React.useRef(null);
+
+  React.useEffect(() => {
+    setNewUserProfile(prevState => ({
+      ...(prevState || {}),
+      beProfile: {...newBeProfState},
+    }))
+  }, [setNewUserProfile, newBeProfState])
 
   const handleCheckboxChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, checked, value } = e.target;
@@ -45,27 +48,27 @@ function BeProfile({ beProfile }: {beProfile: BeProfileI}): ReturnType<React.FC>
     }
     if (checked) {
       if (name === 'fws') {
-        setbeProfState(prevState => ({
+        setnewBeProfState(prevState => ({
           ...prevState,
           fws: [...prevState.fws, value]
         }));
       } else {
-        setbeProfState(prevState => ({
+        setnewBeProfState(prevState => ({
           ...prevState,
           plangs: [...prevState.plangs, value]
         }));
       }
     } else {
       if (name === 'fws') {
-        setbeProfState((prevState: BeProfileI) => {
+        setnewBeProfState((prevState: BeProfileI) => {
           const aux: BeProfileI = {...prevState};
-          aux.fws = aux.fws.filter(e => e !== name);
+          aux.fws = aux.fws.filter(e => e !== value);
           return aux;
         })
       } else {
-        setbeProfState((prevState: BeProfileI) => {
+        setnewBeProfState((prevState: BeProfileI) => {
           const aux: BeProfileI = {...prevState};
-          aux.plangs = aux.plangs.filter(e => e !== name);
+          aux.plangs = aux.plangs.filter(e => e !== value);
           return aux;
         })
       }
@@ -74,7 +77,7 @@ function BeProfile({ beProfile }: {beProfile: BeProfileI}): ReturnType<React.FC>
 
   const setLvl = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { value, name } = e.target;
-    setbeProfState(prevState => ({
+    setnewBeProfState(prevState => ({
       ...prevState,
       [name]: Number(value),
     }));
@@ -82,7 +85,7 @@ function BeProfile({ beProfile }: {beProfile: BeProfileI}): ReturnType<React.FC>
 
   const updateFwTxt = () => {
     if (otherFwRef.current !== null && otherFwRef.current?.value !== undefined) {
-      setbeProfState((prevState: BeProfileI) => ({
+      setnewBeProfState((prevState: BeProfileI) => ({
         ...prevState,
         fws: [...prevState.fws, ...otherFwRef.current!.value.split(',')]
       }))
@@ -91,7 +94,7 @@ function BeProfile({ beProfile }: {beProfile: BeProfileI}): ReturnType<React.FC>
 
   const updatePlTxt = () => {
     if (otherPlRef.current !== null && otherPlRef.current?.value !== undefined) {
-      setbeProfState((prevState: BeProfileI) => ({
+      setnewBeProfState((prevState: BeProfileI) => ({
         ...prevState,
         plangs: [...prevState.plangs, ...otherPlRef.current!.value.split(',')]
       }))
@@ -99,11 +102,22 @@ function BeProfile({ beProfile }: {beProfile: BeProfileI}): ReturnType<React.FC>
   }
 
   React.useEffect(() => {
-    console.log('ceva', beProfState);
-    
-  }, [beProfState])
+    if (!otherFwChecked) {
+      setnewBeProfState(prevState => ({
+        ...prevState,
+        fws: doInter<string>(fwArr, beProfile.fws)
+      }))
+    }
+  }, [otherFwChecked, beProfile])
 
-
+  React.useEffect(() => {
+    if (!otherPlChecked) {
+      setnewBeProfState(prevState => ({
+        ...prevState,
+        plangs: doInter<string>(plArr, beProfile.plangs)
+      }))
+    }
+  }, [otherPlChecked, beProfile])
 
   return (
     <div>
@@ -115,7 +129,7 @@ function BeProfile({ beProfile }: {beProfile: BeProfileI}): ReturnType<React.FC>
       <input name="fws" value={'.net'} type="checkbox" defaultChecked={aspChecked} onChange={handleCheckboxChange} /> ASP.NET <br />
       <input name="fws" value={'other'} type="checkbox" defaultChecked={otherFwChecked} onChange={handleCheckboxChange} /> Other: 
       <input type="text" ref={otherFwRef} disabled={!otherFwChecked} onBlur={updateFwTxt} 
-        defaultValue={!otherFwChecked ? undefined : doDiff<string>(beProfile.fws, fwArr)}
+        defaultValue={!otherFwChecked ? undefined : doDiff<string>(beProfile.fws, fwArr).join(',')}
       /> <br />
       <h4>Programming languages:</h4>
       <input name="plangs" value={'Java'} type="checkbox" defaultChecked={javaChecked} onChange={handleCheckboxChange} /> Java <br />
@@ -125,7 +139,7 @@ function BeProfile({ beProfile }: {beProfile: BeProfileI}): ReturnType<React.FC>
       <input name="plangs" value={'C#'} type="checkbox" defaultChecked={csChecked} onChange={handleCheckboxChange} /> C# <br />
       <input name="plangs" value={'other'} type="checkbox" defaultChecked={otherPlChecked} onChange={handleCheckboxChange} /> Other: 
       <input type="text"
-        defaultValue={!otherPlChecked ? undefined : doDiff<string>(beProfile.plangs, plArr)}
+        defaultValue={!otherPlChecked ? undefined : doDiff<string>(beProfile.plangs, plArr).join(',')}
         ref={otherPlRef} disabled={!otherPlChecked} onBlur={updatePlTxt} 
       /> <br />
       <h4>Tools:</h4>

@@ -48,7 +48,7 @@ function Profile(): ReturnType<React.FC> {
             {userData?.name}
           </h2>
           <p>{userData?.profile?.xp} years xp</p>
-          <p>industry: {userData?.profile?.indType}</p>
+          <p>industry: {userData?.profile?.indType?.join(', ')}</p>
           <p>role: {ROLE_MAPPING.get(userData?.rolePriority as number)?.toUpperCase()}</p>
         </div>
       </div>
@@ -64,7 +64,7 @@ function Profile(): ReturnType<React.FC> {
         </Collapsible>
       </div>
       <div>
-        <Link to={`/edit-profile/${userId}`} target='_blank'>Edit/Add profile</Link>
+        <Link to={`/edit-profile/${userId}`}>Edit/Add profile</Link>
       </div>
       <div>
         {userData?.rolePriority === 2 && <button onClick={togglePaused}>Toggle paused!</button> }

@@ -30,11 +30,14 @@ export interface SSProfileI {
   
 
 export interface Profile {
-    xp: number;
-    indType: string[];
+    xp?: number;
+    indType?: string[];
     feProfile?: FeProfileI;
     beProfile?: BeProfileI;
     ssProfile?: SSProfileI;
+    feProfileId?: number;
+    beProfileId?: number;
+    ssProfileId?: number;
 }
 
 export const ROLE_MAPPING = new Map<number, string>([

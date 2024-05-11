@@ -1,48 +1,53 @@
 import React from 'react';
-import { MultiSelect, Option } from "react-multi-select-component";
 import { Profile } from '../../../models/user.model';
+import { doDiff, doInter } from '../../../utils/arrset';
 
-const options: Option[] = [
-  { label: 'Technology', value: 'TECH' },
-  { label: 'Health', value: 'HEALTH' },
-  { label: 'Finance', value: 'FINANCE' },
-  { label: 'Education', value: 'EDU' },
-  { label: 'Retail', value: 'RETAIL' },
-  { label: 'Other(complete)', value: 'OTHER' },
-];
 
-function MainProfile({ profile, setUserProfile, setStack }: { 
+const indArr = ['TECH', 'HEALTH', 'FINANCE', 'EDU', 'RETAIL'];
+
+function MainProfile({ profile, setStack, setNewUserProfile }: { 
   profile: Profile, 
-  setUserProfile: React.Dispatch<React.SetStateAction<Profile | null>>,
   setStack: React.Dispatch<React.SetStateAction<string>>,
+  setNewUserProfile: React.Dispatch<React.SetStateAction<Profile | undefined>>,
 }): ReturnType<React.FC> {
-  
-  const [selected, setSelected] = React.useState<Option[]>(() => profile.indType.map(
-    (elem: string): Option => ({ label: options.find(opt => opt.value === elem)?.label as string, value: elem })
-  ));
+
+  const [xp, setXp] = React.useState<number>(profile.xp as number);
+  const [indType, setIndType] = React.useState<string[]>(profile.indType as string[]);
+  const [otherChecked, setOtherChecked] = React.useState<boolean>(
+    doDiff<string>(profile.indType as string[], indArr).length > 0
+  );
 
   React.useEffect(() => {
-    setUserProfile((prevState: Profile | null): Profile | null => {
-      if (prevState == null) {
-        return null;
-      }
-      prevState.indType = selected.map(opt => opt.value);      
-      return prevState;
-    })
-  }, [selected, setUserProfile])
-  
+    setNewUserProfile((prevState) => ({
+      ...prevState,
+      indType,
+      xp,
+    }));
+  }, [setNewUserProfile, indType, xp]);
 
-  React.useEffect(() => {
-    if (selected.find((elem: Option) => elem.value === 'OTHER') != null) {
-      const customAns = prompt('What?:');
-      const customOpt: Option = { label: '', value: customAns };
-      setSelected((prevState: Option[]): Option[] => {
-        const tmpArr = [...prevState];
-        tmpArr.pop();
-        return [...tmpArr, customOpt]
+  const handleIndChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { value, checked } = e.target;
+    if (checked) {
+      setIndType(prevState => [...prevState, value]);
+    } else {
+      setIndType(prevState => {
+        let aux = [...prevState];
+        aux = aux.filter(e => e !== value);
+        return aux;
       })
     }
-  }, [selected])
+  }
+
+  const handleTxtInpChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { value } = e.target;
+    setIndType(prevState => [...prevState, ...value.split(',')]);
+  }
+
+  React.useEffect(() => {
+    if (!otherChecked) {
+      setIndType(prevState => doInter<string>(prevState, indArr));
+    }
+  }, [otherChecked])
 
   return (
     <div>
@@ -50,22 +55,33 @@ function MainProfile({ profile, setUserProfile, setStack }: {
         <label>xp:</label>
         <input type="number" defaultValue={profile.xp} 
           onChange={(e: React.ChangeEvent<HTMLInputElement>) => 
-            setUserProfile((prevState: Profile | null): Profile => ({ ...prevState!, xp: Number(e.target.value) }))
+            setXp(Number(e.target.value))
           }
         /><br />
-        <MultiSelect 
-          options={options} 
-          value={selected} 
-          onChange={setSelected} labelledBy='Industry type:' 
-          hasSelectAll={false}
-        /> <br />
+        <div>
+          <input defaultChecked={profile.indType?.includes('TECH')} type="checkbox" value={'TECH'} onChange={handleIndChange} /> Technology <br />
+          <input defaultChecked={profile.indType?.includes('HEALTH')} type="checkbox" value={'HEALTH'} onChange={handleIndChange} /> Health <br />
+          <input defaultChecked={profile.indType?.includes('FINANCE')} type="checkbox" value={'FINANCE'} onChange={handleIndChange} /> Finance <br />
+          <input defaultChecked={profile.indType?.includes('EDU')} type="checkbox" value={'EDU'} onChange={handleIndChange} /> Education <br />
+          <input defaultChecked={profile.indType?.includes('RETAIL')} type="checkbox" value={'RETAIL'} onChange={handleIndChange} /> Retail <br />
+          <input defaultChecked={otherChecked} type="checkbox" value={'OTHER'} onChange={
+            () => {
+              setOtherChecked(prev => !prev);
+            }
+          } /> Other:
+           <input type='text'
+              defaultValue={doDiff<string>(profile.indType as string[], indArr).join(',')}
+              disabled={!otherChecked} onBlur={handleTxtInpChange} 
+            />
+        </div>
+        <br />
         <p>stack:</p>
         <div
           onChange={(e: React.ChangeEvent<HTMLInputElement>) => setStack(e.target.value)}
         >
-          <input type="radio" value={'FE'} name='stack' /> Frontend <br />
-          <input type="radio" value={'BE'} name='stack' /> Backend <br />
-          <input type="radio" value={'BEFE'} name='stack' /> Both <br />
+          <input defaultChecked={profile.feProfile != null} type="radio" value={'FE'} name='stack' /> Frontend <br />
+          <input defaultChecked={profile.beProfile != null} type="radio" value={'BE'} name='stack' /> Backend <br />
+          <input defaultChecked={profile.feProfile != null && profile.beProfile != null} type="radio" value={'BEFE'} name='stack' /> Both <br />
         </div>
       </form>
     </div>

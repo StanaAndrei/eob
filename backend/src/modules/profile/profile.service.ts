@@ -61,6 +61,7 @@ export class ProfileService {
         where: { id: userId },
       });
       let { profile } = user;
+      console.log(user);
       await Profile.getRepository().manager.transaction(
         async (transactionalEntityManager) => {
           const feProfile = plainToInstance(FEProfile, profileDTO.feProfile);
@@ -96,7 +97,7 @@ export class ProfileService {
     const getScoreOfArr: ScoreOfStrArrsTp = (arr1, arr2) =>
       arr1.filter((elem: string) => arr2.includes(elem)).length;
     try {
-      if (targetUser.profile.feProfile) {
+      if (targetUser?.profile?.feProfile) {
         const fePotUsers = await User.findByProfile('fe', targetUser.managerId);
         const newbieFws = targetUser.profile.feProfile.fws;
         const newbieTools = targetUser.profile.feProfile.tools;
@@ -129,7 +130,7 @@ export class ProfileService {
           }
         }
       }
-      if (targetUser.profile.beProfile) {
+      if (targetUser?.profile?.beProfile) {
         const bePotUsers = await User.findByProfile('be', targetUser.managerId);
         const newbieFws = targetUser.profile.feProfile.fws;
         const newbieLangs = targetUser.profile.feProfile.tools;

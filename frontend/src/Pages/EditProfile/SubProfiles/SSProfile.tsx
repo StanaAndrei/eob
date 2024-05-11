@@ -1,35 +1,82 @@
 import React from 'react';
-import { SSProfileI } from '../../../models/user.model';
+import { Profile, SSProfileI } from '../../../models/user.model';
 
-function SSProfile({ ssProfile }: { ssProfile: SSProfileI }): ReturnType<React.FC> {
+const commArr = ['Assertive', 'Passive', 'Aggressive', 'Collaborative'];
+const confArr = ['Avoidance', 'Confrontation', 'Compromise', 'Collaboration'];
 
-  const handleCommStyleCh = (e: React.ChangeEvent<HTMLInputElement>) => {
+function SSProfile({ ssProfile, setNewUserProfile }: { 
+  ssProfile: SSProfileI,
+  setNewUserProfile: React.Dispatch<React.SetStateAction<Profile | undefined>>,
+ }): ReturnType<React.FC> {
+
+  const [newSSProfile, setNewSSProfile] = React.useState<SSProfileI>(ssProfile);
+
+  const [otherCommChecked, setOtherCommChecked] = React.useState<boolean>(
+    !commArr.includes(ssProfile.commStyle)
+  )
+  const [otherConfChecked, setOtherConfChecked] = React.useState<boolean>(
+    !confArr.includes(ssProfile.conflictHandlingMethod)
+  )
+
+  React.useEffect(() => {
+    setNewUserProfile((prevState) => ({
+      ...prevState,
+      ssProfile: {...newSSProfile},
+    }));
+  }, [setNewUserProfile, newSSProfile])
+
+  const handleCommConfStyleCh = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { value, name } = e.target;
-    console.log(value, name);
-    
+    if (value === 'other') {
+      return;
+    }
+    setNewSSProfile(prevState => ({
+      ...prevState,
+      [name]: value
+    }));
+  }
+
+  const handleRadio = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { value, name } = e.target;
+    setNewSSProfile(prevState => ({
+      ...prevState,
+      [name]: Number(value)
+    }));
   }
 
   return (
     <div>
       <h4>Communication style:</h4><br />
-      <div onChange={handleCommStyleCh}>
-        <input type="radio" value={'Assertive'} name='comm' /> Assertive <br />
-        <input type="radio" value={'Passive'} name='comm' /> Passive <br />
-        <input type="radio" value={'Aggressive'} name='comm' /> Aggressive <br />
-        <input type="radio" value={'Collaborative'} name='comm' /> Collaborative <br />
-        <input type="radio" value={'other'} name='comm' /> Other: <input type="text" />
+      <div onChange={handleCommConfStyleCh}>
+        <input defaultChecked={ssProfile.commStyle === 'Assertive'} type="radio" value={'Assertive'} name='commStyle' /> Assertive <br />
+        <input defaultChecked={ssProfile.commStyle === 'Passive'} type="radio" value={'Passive'} name='commStyle' /> Passive <br />
+        <input defaultChecked={ssProfile.commStyle === 'Aggressive'} type="radio" value={'Aggressive'} name='commStyle' /> Aggressive <br />
+        <input defaultChecked={ssProfile.commStyle === 'Collaborative'} type="radio" value={'Collaborative'} name='commStyle' /> Collaborative <br />
+        <input defaultChecked={otherCommChecked} type="radio" value={'other'} name='commStyle' 
+          onChange={() => setOtherCommChecked(prev => !prev)}
+        /> Other:
+        <input name='commStyle' type="text" defaultValue={
+          !otherCommChecked ? '' : ssProfile.commStyle
+        } disabled={!otherCommChecked} />
       </div>
-      <div onChange={undefined}>
-        <input type="radio" name='confhand' /> Avoidance <br />
-        <input type="radio" name='confhand' /> Confrontation <br />
-        <input type="radio" name='confhand' /> Compromise <br />
-        <input type="radio" name='confhand' /> Collaboration <br />
-        <input type="radio" name='confhand' /> Other: <input type="text" />
+      <h4>conflicts handling:</h4>
+      <div onChange={handleCommConfStyleCh}>
+        <input type="radio" defaultChecked={ssProfile.conflictHandlingMethod === 'Avoidance'} value={'Avoidance'} name='conflictHandlingMethod' /> Avoidance <br />
+        <input type="radio" defaultChecked={ssProfile.conflictHandlingMethod === 'Confrontation'} value={'Confrontation'} name='conflictHandlingMethod' /> Confrontation <br />
+        <input type="radio" defaultChecked={ssProfile.conflictHandlingMethod === 'Compromise'} value={'Compromise'} name='conflictHandlingMethod' /> Compromise <br />
+        <input type="radio" defaultChecked={ssProfile.conflictHandlingMethod === 'Collaboration'} value={'Collaboration'} name='conflictHandlingMethod' /> Collaboration <br />
+        <input type="radio" defaultChecked={otherConfChecked} value={'other'} name='conflictHandlingMethod'
+          onChange={() => setOtherConfChecked(prev => !prev)}
+        /> Other: 
+        <input name='conflictHandlingMethod' type="text" defaultValue={
+          !otherConfChecked ? '' : ssProfile.conflictHandlingMethod
+        } disabled={!otherConfChecked} />
       </div>
       <h4>Rate your communication skills:</h4>
       <table>
         <thead>
           <tr>
+            <th></th>
             <th>1</th>
             <th>2</th>
             <th>3</th>
@@ -39,28 +86,28 @@ function SSProfile({ ssProfile }: { ssProfile: SSProfileI }): ReturnType<React.F
         </thead>
         <tbody>
           <tr>
-            <th>Listening:</th>
-              <td><input value={1} type="radio" name='listening' /></td>
-              <td><input value={2} type="radio" name='listening' /></td>
-              <td><input value={3} type="radio" name='listening' /></td>
-              <td><input value={4} type="radio" name='listening' /></td>
-              <td><input value={5} type="radio" name='listening' /></td>
+              <td>Listening:</td>
+              <td><input onChange={handleRadio} value={1} defaultChecked={ssProfile.listeningLvl === 1} type="radio" name='listeningLvl' /></td>
+              <td><input onChange={handleRadio} value={2} defaultChecked={ssProfile.listeningLvl === 2} type="radio" name='listeningLvl' /></td>
+              <td><input onChange={handleRadio} value={3} defaultChecked={ssProfile.listeningLvl === 3} type="radio" name='listeningLvl' /></td>
+              <td><input onChange={handleRadio} value={4} defaultChecked={ssProfile.listeningLvl === 4} type="radio" name='listeningLvl' /></td>
+              <td><input onChange={handleRadio} value={5} defaultChecked={ssProfile.listeningLvl === 5} type="radio" name='listeningLvl' /></td>
           </tr>
           <tr>
-            <th>Verbal:</th>
-              <td><input value={1} type="radio" name='verbal' /></td>
-              <td><input value={2} type="radio" name='verbal' /></td>
-              <td><input value={3} type="radio" name='verbal' /></td>
-              <td><input value={4} type="radio" name='verbal' /></td>
-              <td><input value={5} type="radio" name='verbal' /></td>
+              <td>Verbal:</td>
+              <td><input onChange={handleRadio} value={1} defaultChecked={ssProfile.verbalLvl === 1} type="radio" name='verbalLvl' /></td>
+              <td><input onChange={handleRadio} value={2} defaultChecked={ssProfile.verbalLvl === 2} type="radio" name='verbalLvl' /></td>
+              <td><input onChange={handleRadio} value={3} defaultChecked={ssProfile.verbalLvl === 3} type="radio" name='verbalLvl' /></td>
+              <td><input onChange={handleRadio} value={4} defaultChecked={ssProfile.verbalLvl === 4} type="radio" name='verbalLvl' /></td>
+              <td><input onChange={handleRadio} value={5} defaultChecked={ssProfile.verbalLvl === 5} type="radio" name='verbalLvl' /></td>
           </tr>
           <tr>
-            <td>Written:</td>
-              <td><input value={1} type="radio" name='written' /></td>
-              <td><input value={2} type="radio" name='written' /></td>
-              <td><input value={3} type="radio" name='written' /></td>
-              <td><input value={4} type="radio" name='written' /></td>
-              <td><input value={5} type="radio" name='written' /></td>
+              <td>Written:</td>
+              <td><input onChange={handleRadio} value={1} defaultChecked={ssProfile.writtenLvl === 1} type="radio" name='writtenLvl' /></td>
+              <td><input onChange={handleRadio} value={2} defaultChecked={ssProfile.writtenLvl === 2} type="radio" name='writtenLvl' /></td>
+              <td><input onChange={handleRadio} value={3} defaultChecked={ssProfile.writtenLvl === 3} type="radio" name='writtenLvl' /></td>
+              <td><input onChange={handleRadio} value={4} defaultChecked={ssProfile.writtenLvl === 4} type="radio" name='writtenLvl' /></td>
+              <td><input onChange={handleRadio} value={5} defaultChecked={ssProfile.writtenLvl === 5} type="radio" name='writtenLvl' /></td>
           </tr>
         </tbody>
       </table>
@@ -68,6 +115,7 @@ function SSProfile({ ssProfile }: { ssProfile: SSProfileI }): ReturnType<React.F
       <table>
         <thead>
           <tr>
+            <th></th>
             <th>1</th>
             <th>2</th>
             <th>3</th>
@@ -78,27 +126,27 @@ function SSProfile({ ssProfile }: { ssProfile: SSProfileI }): ReturnType<React.F
         <tbody>
           <tr>
             <td>Collaborating:</td>
-              <td><input value={1} type="radio" name='collab' /></td>
-              <td><input value={2} type="radio" name='collab' /></td>
-              <td><input value={3} type="radio" name='collab' /></td>
-              <td><input value={4} type="radio" name='collab' /></td>
-              <td><input value={5} type="radio" name='collab' /></td>
+              <td><input onChange={handleRadio} value={1} defaultChecked={ssProfile.collabLvl === 1} type="radio" name='collabLvl' /></td>
+              <td><input onChange={handleRadio} value={2} defaultChecked={ssProfile.collabLvl === 2} type="radio" name='collabLvl' /></td>
+              <td><input onChange={handleRadio} value={3} defaultChecked={ssProfile.collabLvl === 3} type="radio" name='collabLvl' /></td>
+              <td><input onChange={handleRadio} value={4} defaultChecked={ssProfile.collabLvl === 4} type="radio" name='collabLvl' /></td>
+              <td><input onChange={handleRadio} value={5} defaultChecked={ssProfile.collabLvl === 5} type="radio" name='collabLvl' /></td>
           </tr>
           <tr>
             <td>Conflict resolution:</td>
-              <td><input value={1} type="radio" name='confres' /></td>
-              <td><input value={2}  type="radio" name='confres' /></td>
-              <td><input value={3}  type="radio" name='confres' /></td>
-              <td><input value={4}  type="radio" name='confres' /></td>
-              <td><input value={5}  type="radio" name='confres' /></td>
+              <td><input onChange={handleRadio} value={1} defaultChecked={ssProfile.conflictResolutionLvl === 1} type="radio" name='conflictResolutionLvl' /></td>
+              <td><input onChange={handleRadio} value={2} defaultChecked={ssProfile.conflictResolutionLvl === 2} type="radio" name='conflictResolutionLvl' /></td>
+              <td><input onChange={handleRadio} value={3} defaultChecked={ssProfile.conflictResolutionLvl === 3} type="radio" name='conflictResolutionLvl' /></td>
+              <td><input onChange={handleRadio} value={4} defaultChecked={ssProfile.conflictResolutionLvl === 4} type="radio" name='conflictResolutionLvl' /></td>
+              <td><input onChange={handleRadio} value={5} defaultChecked={ssProfile.conflictResolutionLvl === 5} type="radio" name='conflictResolutionLvl' /></td>
           </tr>
           <tr>
             <td>Leadership:</td>
-              <td><input value={1} type="radio" name='leadership' /></td>
-              <td><input value={2} type="radio" name='leadership' /></td>
-              <td><input value={3} type="radio" name='leadership' /></td>
-              <td><input value={4} type="radio" name='leadership' /></td>
-              <td><input value={5} type="radio" name='leadership' /></td>
+              <td><input onChange={handleRadio} value={1} defaultChecked={ssProfile.leadershipLvl === 1} type="radio" name='leadershipLvl' /></td>
+              <td><input onChange={handleRadio} value={2} defaultChecked={ssProfile.leadershipLvl === 2} type="radio" name='leadershipLvl' /></td>
+              <td><input onChange={handleRadio} value={3} defaultChecked={ssProfile.leadershipLvl === 3} type="radio" name='leadershipLvl' /></td>
+              <td><input onChange={handleRadio} value={4} defaultChecked={ssProfile.leadershipLvl === 4} type="radio" name='leadershipLvl' /></td>
+              <td><input onChange={handleRadio} value={5} defaultChecked={ssProfile.leadershipLvl === 5} type="radio" name='leadershipLvl' /></td>
           </tr>
         </tbody>
       </table>
