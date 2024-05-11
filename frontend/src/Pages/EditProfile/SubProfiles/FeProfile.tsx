@@ -3,17 +3,17 @@ import { FeProfileI } from '../../../models/user.model';
 
 function FeProfile({ feProfile }: { feProfile: FeProfileI }): ReturnType<React.FC> {
 
-  const [reactChecked, setReactChecked] = React.useState<boolean>(feProfile.fws.includes('React'));
-  const [ngChecked, setNgChecked] = React.useState<boolean>(feProfile.fws.includes('Ng'));
-  const [vueChecked, setVueChecked] = React.useState<boolean>(feProfile.fws.includes('Vue'));
-  const [otherChecked, setOtherChecked] = React.useState<boolean>(!(reactChecked || ngChecked || vueChecked));
-  const otherRef: React.LegacyRef<HTMLInputElement> = React.useRef(null);
+  const [checkboxesState, setCheckboxesState] = React.useState({
+    reactChecked: feProfile.fws.includes('React'),
+    ngChecked: feProfile.fws.includes('Ng'),
+    vueChecked: feProfile.fws.includes('Vue'),
+    otherChecked: !(feProfile.fws.includes('React') || feProfile.fws.includes('Ng') || feProfile.fws.includes('Vue')),
+    npmyarnChecked: feProfile.tools.includes('npmyarn'),
+    webpackChecked: feProfile.tools.includes('webpack'),
+    ggChecked: feProfile.tools.includes('gg'),
+    babelChecked: feProfile.tools.includes('babel'),
+  });
   const [fws, setFws] = React.useState<string[]>([]);
-  
-  const [npmyarnChecked, setNpmyarnChecked] = React.useState<boolean>(feProfile.tools.includes('npmyarn'));
-  const [webpackChecked, setWebpackChecked] = React.useState<boolean>(feProfile.tools.includes('webpack'));
-  const [ggChecked, setGgChecked] = React.useState<boolean>(feProfile.tools.includes('gg'));
-  const [babelChecked, setBabelChecked] = React.useState<boolean>(feProfile.tools.includes('babel'));
   const [tools, setTools] = React.useState<string[]>([]);
 
   const handleToolChange = (e: React.SyntheticEvent<HTMLInputElement>, isChecked: boolean) => {
@@ -50,42 +50,35 @@ function FeProfile({ feProfile }: { feProfile: FeProfileI }): ReturnType<React.F
     }
   }
 
+  const handleCheckboxChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, checked } = e.target;
+    setCheckboxesState(prevState => ({
+      ...prevState,
+      [name]: checked,
+    }));
+  };
 
   return (
     <div>
       <h4>Frameworks:</h4>
       <label>
-        <input value={'React'} defaultChecked={reactChecked} type="checkbox" onChange={e => {
-          setReactChecked(!reactChecked);
-          handleFwChange(e, reactChecked);
-        }} />
+        <input name="reactChecked" type="checkbox" checked={checkboxesState.reactChecked} onChange={handleCheckboxChange} />
         React
       </label><br />
       <label>
-        <input value={'Ng'} defaultChecked={ngChecked} type="checkbox" onChange={e => {
-          setNgChecked(!ngChecked);
-          handleFwChange(e, ngChecked);
-        }} />
+        <input name="ngChecked" type="checkbox" checked={checkboxesState.ngChecked} onChange={handleCheckboxChange} />
         Angular
       </label><br />
       <label>
-        <input value={'Vue'} defaultChecked={vueChecked} type="checkbox" onChange={e => {
-          setVueChecked(!vueChecked);
-          handleFwChange(e, vueChecked);
-        }} />
+        <input name="vueChecked" type="checkbox" checked={checkboxesState.vueChecked} onChange={handleCheckboxChange} />
         Vue
       </label><br />
       <label>
-        <input value={'other'} defaultChecked={otherChecked} type="checkbox" onChange={e => {
-          setOtherChecked(!otherChecked);
-          handleFwChange(e, otherChecked);
-        }} />
+        <input name="otherChecked" type="checkbox" checked={checkboxesState.otherChecked} onChange={handleCheckboxChange} />
         Other:
       </label>
-      <input type="text" ref={otherRef} disabled={!otherChecked} />
-      <br />
+      <input type="text" disabled={!checkboxesState.otherChecked} /><br />
       <hr />
-      <br />
       <h4>Level of:</h4>
       <table>
         <thead>
@@ -135,31 +128,19 @@ function FeProfile({ feProfile }: { feProfile: FeProfileI }): ReturnType<React.F
       </table>
       <h4>Tools:</h4>
       <label>
-        <input type="checkbox" checked={npmyarnChecked} onChange={e => {
-          setNpmyarnChecked(p => !p);
-          handleToolChange(e, npmyarnChecked);
-        }} />
+        <input name="npmyarnChecked" type="checkbox" checked={checkboxesState.npmyarnChecked} onChange={handleCheckboxChange} />
         NPM/Yarn
       </label><br />
       <label>
-        <input type="checkbox" checked={webpackChecked} onChange={e => {
-          setWebpackChecked(p => !p);
-          handleToolChange(e, webpackChecked);
-        }} />
+        <input name="webpackChecked" type="checkbox" checked={checkboxesState.webpackChecked} onChange={handleCheckboxChange} />
         Webpack
       </label><br />
       <label>
-        <input type="checkbox" checked={ggChecked} onChange={e => {
-          setGgChecked(p => !p);
-          handleToolChange(e, ggChecked);
-        }} />
+        <input name="ggChecked" type="checkbox" checked={checkboxesState.ggChecked} onChange={handleCheckboxChange} />
         Grunt/Gulp
       </label><br />
       <label>
-        <input type="checkbox" checked={babelChecked} onChange={e => {
-          setBabelChecked(p => !p);
-          handleToolChange(e, babelChecked);
-        }} />
+        <input name="babelChecked" type="checkbox" checked={checkboxesState.babelChecked} onChange={handleCheckboxChange} />
         Babel
       </label><br />
     </div>

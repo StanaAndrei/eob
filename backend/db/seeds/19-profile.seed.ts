@@ -13,6 +13,7 @@ export default class ProfileSeeder implements Seeder {
     const profileRepo = dataSource.getRepository(Profile);
     await profileRepo.insert({
       feProfileId: 1,
+      beProfileId: 1,
       xp: 5,
       indType: ['TECH', 'HEALTH'],
     });

@@ -2,9 +2,10 @@ import React from 'react';
 import MainProfile from './SubProfiles/MainProfile';
 import { axiosAuthInstToSv } from './../../network/server.net';
 import { useParams } from 'react-router';
-import { BeProfileI, FeProfileI, Profile } from './../../models/user.model';
+import { BeProfileI, FeProfileI, Profile, SSProfileI } from './../../models/user.model';
 import FeProfile from './SubProfiles/FeProfile';
 import BeProfile from './SubProfiles/BeProfile';
+import SSProfile from './SubProfiles/SSProfile';
 
 function EditProfile(): ReturnType<React.FC> {
   
@@ -20,9 +21,6 @@ function EditProfile(): ReturnType<React.FC> {
       return tmp;
     })
   }
-  
-  //const [currId, setCurrId] = React.useState<number>(0);
-
   React.useEffect(() => {
     console.log(userProfile);
     
@@ -30,16 +28,16 @@ function EditProfile(): ReturnType<React.FC> {
 
   React.useEffect(() => {
     if (stack != '') {      
-      if (stack.includes('BE')) {
-        console.log();
-        
+      
+      if (stack.includes('BE') && userProfile) {
+        setFormAtIndex(<BeProfile beProfile={userProfile.beProfile as  BeProfileI} />, 2);
       }
-      if (stack.includes('FE')) {
-        console.log();
-        
+      if (stack.includes('FE') && userProfile) {
+        setFormAtIndex(<FeProfile feProfile={userProfile.feProfile as FeProfileI} />, 1);
       }
     }
-  }, [stack])
+    setFormAtIndex( <SSProfile ssProfile={userProfile?.ssProfile as SSProfileI} />, 3 )
+  }, [stack, userProfile])
 
   React.useEffect(() => {
     if (userProfile == null) {
@@ -50,7 +48,7 @@ function EditProfile(): ReturnType<React.FC> {
         profile={userProfile as Profile} 
         setUserProfile={setUserProfile} 
         setStack={setStack} 
-      />
+      />, <></>, <></>, <></>
     ]);
   }, [userProfile])
 
@@ -64,14 +62,23 @@ function EditProfile(): ReturnType<React.FC> {
   }, [userId])
   const [formIndex, setFormIndex] = React.useState<number>(0);
 
+  const goForward = () => {
+    let nxtId = formIndex + 1;
+    while (nxtId < forms.length && forms[nxtId].type === React.Fragment) {      
+      nxtId++;
+    }
+    if (nxtId < forms.length) {
+      setFormIndex(nxtId);
+    }
+  }
+
   return !userProfile ? null : (
     <div>
-      {/*forms[formIndex]*/}
-      <BeProfile beProfile={userProfile.beProfile as  BeProfileI} />
+      {forms[formIndex]}
       <div>
         <hr />
         <button>prev</button>
-        <button>next</button>
+        <button onClick={goForward}>next</button>
       </div>
     </div>
   );
@@ -79,6 +86,7 @@ function EditProfile(): ReturnType<React.FC> {
 
 export default EditProfile;
 /**
+ * <BeProfile beProfile={userProfile.beProfile as  BeProfileI} />
  *  <FeProfile feProfile={userProfile.feProfile as FeProfileI} />
  * <MainProfile profile={userProfile as Profile} setUserProfile={setUserProfile} setStack={setStack} />
  */

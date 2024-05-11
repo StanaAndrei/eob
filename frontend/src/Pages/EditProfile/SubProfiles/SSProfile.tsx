@@ -1,26 +1,19 @@
 import React from 'react';
+import { SSProfileI } from '../../../models/user.model';
 
-function SSProfile(): ReturnType<React.FC> {
-
-  const handleChangeComm = (e) => {
-    
-  }
-
-  const handleChangeConfHand = (e) => {
-
-  }
+function SSProfile({ ssProfile }: { ssProfile: SSProfileI }): ReturnType<React.FC> {
 
   return (
     <div>
       <h4>Communication style:</h4><br />
-      <div onChange={handleChangeComm}>
+      <div onChange={undefined}>
         <input type="radio" name='comm' /> Assertive <br />
         <input type="radio" name='comm' /> Passive <br />
         <input type="radio" name='comm' /> Aggressive <br />
         <input type="radio" name='comm' /> Collaborative <br />
         <input type="radio" name='comm' /> Other: <input type="text" />
       </div>
-      <div onChange={handleChangeConfHand}>
+      <div onChange={undefined}>
         <input type="radio" name='confhand' /> Assertive <br />
         <input type="radio" name='confhand' /> Passive <br />
         <input type="radio" name='confhand' /> Aggressive <br />
