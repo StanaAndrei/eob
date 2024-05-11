@@ -1,9 +1,10 @@
 import React from 'react';
 import './Nav.css';
-import { getAuthToken } from '../../stores/auth.store';
+import useAuthStore, { getAuthToken, TokData } from '../../stores/auth.store';
 
 export default function Nav(): ReturnType<React.FC> {
   const [isAuth] = React.useState<boolean>(getAuthToken() != null);
+  const tokData = useAuthStore(state => state.getTokData() as TokData);
 
   return (
     <nav className="navbar">
@@ -14,9 +15,9 @@ export default function Nav(): ReturnType<React.FC> {
         <li className="nav-item">
           <a href="/me" className="nav-link">Me</a>
         </li>
-        <li className="nav-item">
-          <a href="#" className="nav-link">Services</a>
-        </li>
+        {tokData?.rolePriority === 2 && <li className="nav-item">
+          <a href={`/newbies/${tokData.id}`} className="nav-link">Newbies</a>
+        </li>}
         <li className="nav-item">
           <a href="#" className="nav-link">Contact</a>
         </li>

@@ -79,9 +79,9 @@ function MainProfile({ profile, setStack, setNewUserProfile }: {
         <div
           onChange={(e: React.ChangeEvent<HTMLInputElement>) => setStack(e.target.value)}
         >
-          <input defaultChecked={profile.feProfile != null} type="radio" value={'FE'} name='stack' /> Frontend <br />
-          <input defaultChecked={profile.beProfile != null} type="radio" value={'BE'} name='stack' /> Backend <br />
-          <input defaultChecked={profile.feProfile != null && profile.beProfile != null} type="radio" value={'BEFE'} name='stack' /> Both <br />
+          <input type="radio" value={'FE'} name='stack' /> Frontend <br />
+          <input type="radio" value={'BE'} name='stack' /> Backend <br />
+          <input type="radio" value={'BEFE'} name='stack' /> Both <br />
         </div>
       </form>
     </div>

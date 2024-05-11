@@ -14,6 +14,7 @@ import Profile from './Pages/Profile/Profile';
 import Me from './Pages/Profile/Me';
 import EditProfile from './Pages/EditProfile/EditProfile';
 import RegisterOther from './Pages/RegisterOther/RegisterOther';
+import Newbies from './Pages/Newbies/Newbies';
 
 function App(): ReturnType<React.FC> {
 
@@ -27,6 +28,8 @@ function App(): ReturnType<React.FC> {
       <Route path='/profile/:userId' element={ <Profile /> } />
       <Route path='/me' element={ <Me /> } />
       <Route path='/mk-other' element={ <RegisterOther /> } />
+      <Route path='/newbies/:userId' element={ <Newbies /> } />
+
 
 
       <Route path='/login' element={ <Login /> } />

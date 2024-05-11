@@ -91,4 +91,8 @@ export class ProfileDTO {
   @ValidateNested()
   @Type(() => BEProfileDTO)
   beProfile: BEProfileDTO;
+
+  beProfileId?: number;
+  feProfileId?: number;
+  ssProfileId?: number;
 }

@@ -1,5 +1,5 @@
 import React from 'react';
-import { BeProfileI, Profile } from '../../../models/user.model';
+import { BeProfileI, DEFAULT_PROFILE, Profile } from '../../../models/user.model';
 import { doDiff, doInter } from '../../../utils/arrset';
 const fwArr = ['Node', 'Django', 'Ror', 'Spring', '.net'];
 const plArr = ['Java', 'Python', 'Ruby', 'Php', 'Cs'];
@@ -15,14 +15,18 @@ function BeProfile({ beProfile, setNewUserProfile }: {
   const [rorChecked] = React.useState<boolean>(beProfile.fws.includes('Ror'));
   const [springChecked] = React.useState<boolean>(beProfile.fws.includes('Spring'));
   const [aspChecked] = React.useState<boolean>(beProfile.fws.includes('.net'));
-  const [otherFwChecked, setOtherFwChecked] = React.useState<boolean>(() => doDiff<string>(beProfile.fws, fwArr).length > 0);
+  const [otherFwChecked, setOtherFwChecked] = React.useState<boolean>(
+    () => doDiff<string>(beProfile.fws, fwArr).length > 0 && beProfile !== DEFAULT_PROFILE.beProfile
+);
 
   const [javaChecked] = React.useState<boolean>(beProfile.plangs.includes('Java'));
   const [pyChecked] = React.useState<boolean>(beProfile.plangs.includes('Python'));
   const [rubyChecked] = React.useState<boolean>(beProfile.plangs.includes('Ruby'));
   const [phpChecked] = React.useState<boolean>(beProfile.plangs.includes('Php'));
   const [csChecked] = React.useState<boolean>(beProfile.plangs.includes('Cs'));
-  const [otherPlChecked, setOtherPlChecked] = React.useState<boolean>(() => doDiff<string>(beProfile.plangs, plArr).length > 0);
+  const [otherPlChecked, setOtherPlChecked] = React.useState<boolean>(
+    () => doDiff<string>(beProfile.plangs, plArr).length > 0 && beProfile !== DEFAULT_PROFILE.beProfile
+  );
 
 
   const [newBeProfState, setnewBeProfState] = React.useState<BeProfileI>(beProfile);

@@ -48,13 +48,15 @@ export class Profile extends BaseEntity {
   })
   indType: IndustryType[];
 
-  @OneToOne(() => FEProfile)
+  @OneToOne(() => FEProfile, { onDelete: 'SET NULL' })
   @JoinColumn()
-  feProfile: FEProfile;
+  feProfile?: FEProfile;
 
-  @OneToOne(() => BEProfile)
+  @OneToOne(() => BEProfile, (beProfile) => beProfile.profile, {
+    onDelete: 'SET NULL',
+  })
   @JoinColumn()
-  beProfile: BEProfile;
+  beProfile?: BEProfile;
 
   @OneToOne(() => SSProfile)
   @JoinColumn()

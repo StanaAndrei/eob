@@ -1,5 +1,12 @@
-import { BaseEntity, Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import {
+  BaseEntity,
+  Column,
+  Entity,
+  OneToOne,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
 import { StringArrayTransformer } from './str-arr.transformer';
+import { Profile } from '../profile.entity';
 
 @Entity('beprofiles')
 export class BEProfile extends BaseEntity {
@@ -31,4 +38,9 @@ export class BEProfile extends BaseEntity {
 
   @Column()
   sqlLvl: number;
+
+  @OneToOne(() => Profile, (profile) => profile.beProfile, {
+    onDelete: 'SET NULL',
+  })
+  profile: Profile;
 }

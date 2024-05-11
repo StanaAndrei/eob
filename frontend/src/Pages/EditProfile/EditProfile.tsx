@@ -2,7 +2,7 @@ import React from 'react';
 import MainProfile from './SubProfiles/MainProfile';
 import { axiosAuthInstToSv } from './../../network/server.net';
 import { useNavigate, useParams } from 'react-router';
-import { BeProfileI, FeProfileI, Profile, SSProfileI } from './../../models/user.model';
+import { BeProfileI, DEFAULT_PROFILE, FeProfileI, Profile, SSProfileI } from './../../models/user.model';
 import FeProfile from './SubProfiles/FeProfile';
 import BeProfile from './SubProfiles/BeProfile';
 import SSProfile from './SubProfiles/SSProfile';
@@ -32,7 +32,10 @@ function EditProfile(): ReturnType<React.FC> {
     if (stack != '') {      
       
       if (stack.includes('BE') && userProfile) {
-        setFormAtIndex(<BeProfile setNewUserProfile={setNewUserProfile} beProfile={userProfile.beProfile as  BeProfileI} />, 2);
+        setFormAtIndex(<BeProfile 
+          setNewUserProfile={setNewUserProfile} 
+          beProfile={userProfile?.beProfile ?? DEFAULT_PROFILE.beProfile as BeProfileI} 
+        />, 2);
       } else {
         setFormAtIndex(<></>, 2);
         setNewUserProfile((prevState) => {
@@ -42,7 +45,10 @@ function EditProfile(): ReturnType<React.FC> {
         });
       }
       if (stack.includes('FE') && userProfile) {
-        setFormAtIndex(<FeProfile setNewUserProfile={setNewUserProfile} feProfile={userProfile.feProfile as FeProfileI} />, 1);
+        setFormAtIndex(<FeProfile 
+          setNewUserProfile={setNewUserProfile} 
+          feProfile={userProfile?.feProfile ?? DEFAULT_PROFILE.feProfile as FeProfileI} 
+        />, 1);
       } else {
         setFormAtIndex(<></>, 1);
         setNewUserProfile(prevState => {
@@ -66,15 +72,19 @@ function EditProfile(): ReturnType<React.FC> {
         setStack={setStack} 
         setNewUserProfile={setNewUserProfile}
       />, 
-      userProfile.feProfile != null ? <FeProfile setNewUserProfile={setNewUserProfile} feProfile={userProfile.feProfile as FeProfileI} /> : <></>, 
-      userProfile.beProfile != null ? <BeProfile setNewUserProfile={setNewUserProfile} beProfile={userProfile.beProfile as BeProfileI} /> : <></>, 
+      userProfile.feProfile != null && userProfile.feProfile !== DEFAULT_PROFILE.feProfile 
+      ? <FeProfile setNewUserProfile={setNewUserProfile} 
+      feProfile={userProfile?.feProfile ?? DEFAULT_PROFILE.feProfile as FeProfileI}  /> : <></>, 
+      userProfile.beProfile != null && userProfile.beProfile !== DEFAULT_PROFILE.beProfile
+      ? <BeProfile setNewUserProfile={setNewUserProfile} 
+      beProfile={userProfile?.beProfile ?? DEFAULT_PROFILE.beProfile as BeProfileI}  /> : <></>, 
       <SSProfile setNewUserProfile={setNewUserProfile} ssProfile={userProfile?.ssProfile as SSProfileI} />,
     ]);
   }, [userProfile])
 
   React.useEffect(() => {    
     axiosAuthInstToSv.get(`/user/${userId}`).then(res => {
-      setUserProfile(res.data.profile);
+      setUserProfile(res.data.profile ?? DEFAULT_PROFILE);
     }).catch(err => {
       console.error(err);
       alert('ERROR')
@@ -85,14 +95,24 @@ function EditProfile(): ReturnType<React.FC> {
   const goForward = () => {
     let nxtId = formIndex + 1;
     if (nxtId === forms.length) {
-      console.log(newUserProfile);
-      axiosAuthInstToSv.patch(`/profile/${userId}`, newUserProfile).then(() => {
-        navigate(`/profile/${userId}`);
-        return
-      }).catch(err => {
-        console.error(err);
-        alert('ERROR');
-      })//*/
+      console.log('lalal', newUserProfile);
+      if (userProfile !== DEFAULT_PROFILE) {
+        axiosAuthInstToSv.patch(`/profile/${userId}`, newUserProfile).then(() => {
+          navigate(`/profile/${userId}`);
+          return
+        }).catch(err => {
+          console.error(err);
+          alert('ERROR');
+        })//*/
+      } else {
+        axiosAuthInstToSv.post(`/profile/${userId}`, newUserProfile).then(() => {
+          navigate(`/profile/${userId}`);
+          return
+        }).catch(err => {
+          console.error(err);
+          alert('ERROR');
+        })//*/
+      }
       return
     }//*/
 

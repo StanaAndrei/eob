@@ -29,8 +29,12 @@ export class ProfileService {
           const beProfile = plainToInstance(BEProfile, profileDTO.beProfile);
           const ssProfile = plainToInstance(SSProfile, profileDTO.ssProfile);
 
-          await transactionalEntityManager.save(FEProfile, feProfile);
-          await transactionalEntityManager.save(BEProfile, beProfile);
+          if (feProfile) {
+            await transactionalEntityManager.save(FEProfile, feProfile);
+          }
+          if (beProfile) {
+            await transactionalEntityManager.save(BEProfile, beProfile);
+          }
           await transactionalEntityManager.save(SSProfile, ssProfile);
 
           const profile = plainToInstance(Profile, profileDTO);
@@ -59,6 +63,12 @@ export class ProfileService {
     try {
       const user = await User.findOne({
         where: { id: userId },
+        relations: [
+          'profile',
+          'profile.beProfile',
+          'profile.feProfile',
+          'profile.ssProfile',
+        ],
       });
       let { profile } = user;
       console.log(user);
@@ -68,16 +78,33 @@ export class ProfileService {
           const beProfile = plainToInstance(BEProfile, profileDTO.beProfile);
           const ssProfile = plainToInstance(SSProfile, profileDTO.ssProfile);
 
-          await transactionalEntityManager.save(FEProfile, feProfile);
-          await transactionalEntityManager.save(BEProfile, beProfile);
-          await transactionalEntityManager.save(SSProfile, ssProfile);
+          if (feProfile) {
+            console.log('hereeeeeeeeeeeeee', feProfile);
 
+            await transactionalEntityManager.save(FEProfile, feProfile);
+          } else if (profileDTO.feProfileId) {
+            await transactionalEntityManager.remove(
+              FEProfile,
+              profile.feProfile,
+            );
+          }
+          if (beProfile) {
+            await transactionalEntityManager.save(BEProfile, beProfile);
+          } else if (profileDTO.beProfileId) {
+            await transactionalEntityManager.remove(
+              BEProfile,
+              profile.beProfile,
+            );
+          }
+          await transactionalEntityManager.save(SSProfile, ssProfile);
           profile = plainToInstance(Profile, profileDTO);
           profile.feProfile = feProfile;
           profile.beProfile = beProfile;
           profile.ssProfile = ssProfile;
 
+          await transactionalEntityManager.query('SET FOREIGN_KEY_CHECKS=0');
           await transactionalEntityManager.save(Profile, profile);
+          await transactionalEntityManager.query('SET FOREIGN_KEY_CHECKS=1');
         },
       );
       await this.matchBasedOnProfile(user);
@@ -103,7 +130,10 @@ export class ProfileService {
         const newbieTools = targetUser.profile.feProfile.tools;
         //console.log(fePotUsers);
         for (const fePotUser of fePotUsers) {
-          if (fePotUser.isOld !== targetUser.isOld) {
+          if (
+            fePotUser.isOld !== targetUser.isOld ||
+            fePotUser.id === targetUser.id
+          ) {
             continue;
           }
           const buddyFws = fePotUser.profile.feProfile.fws;
@@ -135,7 +165,10 @@ export class ProfileService {
         const newbieFws = targetUser.profile.feProfile.fws;
         const newbieLangs = targetUser.profile.feProfile.tools;
         for (const bePotUser of bePotUsers) {
-          if (bePotUser.isOld !== targetUser.isOld) {
+          if (
+            bePotUser.isOld !== targetUser.isOld ||
+            bePotUser.id === targetUser.id
+          ) {
             continue;
           }
           const buddyFws = bePotUser.profile.feProfile.fws;

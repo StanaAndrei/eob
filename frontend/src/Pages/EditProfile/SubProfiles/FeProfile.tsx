@@ -1,5 +1,5 @@
 import React from 'react';
-import { FeProfileI, Profile } from '../../../models/user.model';
+import { DEFAULT_PROFILE, FeProfileI, Profile } from '../../../models/user.model';
 import { doDiff, doInter } from '../../../utils/arrset';
 
 const fwsArr = ['React', 'Ng', 'Vue'];
@@ -11,7 +11,7 @@ function FeProfile({ feProfile, setNewUserProfile }: {
 
   const [newFeProfile, setnewFeProfile] = React.useState<FeProfileI>(feProfile);
   const [otherChecked, setOtherChecked] = React.useState<boolean>(
-    doDiff<string>(feProfile.fws, fwsArr).length > 0
+    doDiff<string>(feProfile.fws, fwsArr).length > 0 && feProfile !== DEFAULT_PROFILE.feProfile
   );
 
   const handleCBChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -21,9 +21,7 @@ function FeProfile({ feProfile, setNewUserProfile }: {
       [name]: [...prevState[name as keyof FeProfileI] as string[], value],
     }));
   };
-
-  console.log(feProfile.fws);
-  
+    
   const handleInpBlur = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { value, name } = e.target;
     setnewFeProfile((prevState: FeProfileI) => ({

@@ -51,4 +51,36 @@ export default interface User {
     paused: boolean;
     profile?: Profile;
     rolePriority: number;
+    email: string;
 }
+
+export const DEFAULT_PROFILE: Profile = {
+    xp: 0,
+    indType: [''],
+    feProfile: {
+        fws: [''],
+        tools: [''],
+        htmlLvl: 0,
+        cssLvl: 0,
+        tsLvl: 0,
+        jsLvl: 0,
+    },
+    beProfile: {
+        plangs: [''],
+        fws: [''],
+        dockerLvl: 0,
+        kuberLvl: 0,
+        awsAzureGcpLvl: 0,
+        sqlLvl: 0,
+    },
+    ssProfile: {
+        commStyle: '',
+        conflictHandlingMethod: '',
+        listeningLvl: 0,
+        verbalLvl: 0,
+        writtenLvl: 0,
+        collabLvl: 0,
+        conflictResolutionLvl: 0,
+        leadershipLvl: 0
+    }//*/
+};
