@@ -11,7 +11,7 @@ function Newbies(): ReturnType<React.FC> {
   React.useEffect(() => {
     axiosAuthInstToSv.get(`/user/newbies-of/${userId}`).then(res => {
       console.log(res.data);
-      
+      setNewbies(res.data);
     }).catch(err => {
       console.error(err);
       alert('ERROR')
@@ -20,7 +20,11 @@ function Newbies(): ReturnType<React.FC> {
 
   return (
     <div>
-      
+      {
+        newbies.map((e, id) => <div key={id}>
+          <p>{e.email}, {e.name}</p>
+        </div> )
+      }
     </div>
   );
 }
