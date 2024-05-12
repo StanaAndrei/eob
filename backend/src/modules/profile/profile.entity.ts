@@ -10,7 +10,6 @@ import {
 import { SSProfile } from './subprofiles/ssprofile.entity';
 import { FEProfile } from './subprofiles/feprofile.entity';
 import { BEProfile } from './subprofiles/beprofile.entity';
-import FeProfile from './../../../../frontend/src/Pages/Profile/SubProfiles/FeProfile';
 
 export enum IndustryTypePredef {
   TECH,
