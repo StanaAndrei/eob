@@ -10,6 +10,7 @@ import {
 import { SSProfile } from './subprofiles/ssprofile.entity';
 import { FEProfile } from './subprofiles/feprofile.entity';
 import { BEProfile } from './subprofiles/beprofile.entity';
+import FeProfile from './../../../../frontend/src/Pages/Profile/SubProfiles/FeProfile';
 
 export enum IndustryTypePredef {
   TECH,
@@ -48,14 +49,18 @@ export class Profile extends BaseEntity {
   })
   indType: IndustryType[];
 
-  @OneToOne(() => FEProfile, { onDelete: 'SET NULL' })
-  @JoinColumn()
+  @OneToOne(() => FEProfile, (feProfile) => feProfile.profile, {
+    onDelete: 'SET NULL',
+    nullable: true,
+  })
+  @JoinColumn({ name: 'fe_profile_id' })
   feProfile?: FEProfile;
 
   @OneToOne(() => BEProfile, (beProfile) => beProfile.profile, {
     onDelete: 'SET NULL',
+    nullable: true,
   })
-  @JoinColumn()
+  @JoinColumn({ name: 'be_profile_id' })
   beProfile?: BEProfile;
 
   @OneToOne(() => SSProfile)
@@ -70,4 +75,10 @@ export class Profile extends BaseEntity {
 
   @Column()
   beProfileId: number;
+
+  async clearFeProfile() {
+    this.feProfileId = null;
+    this.feProfile = null;
+    await this.save();
+  }
 }

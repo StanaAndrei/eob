@@ -79,29 +79,31 @@ export class ProfileService {
           const ssProfile = plainToInstance(SSProfile, profileDTO.ssProfile);
 
           if (feProfile) {
-            console.log('hereeeeeeeeeeeeee', feProfile);
-
             await transactionalEntityManager.save(FEProfile, feProfile);
           } else if (profileDTO.feProfileId) {
-            await transactionalEntityManager.remove(
+            //profile.feProfileId = null;
+            await transactionalEntityManager.delete(
               FEProfile,
-              profile.feProfile,
-            );
+              profile.feProfileId,
+            );//*/
           }
           if (beProfile) {
             await transactionalEntityManager.save(BEProfile, beProfile);
           } else if (profileDTO.beProfileId) {
-            await transactionalEntityManager.remove(
+            await transactionalEntityManager.delete(
               BEProfile,
-              profile.beProfile,
+              profile.beProfileId,
             );
           }
           await transactionalEntityManager.save(SSProfile, ssProfile);
           profile = plainToInstance(Profile, profileDTO);
-          profile.feProfile = feProfile;
-          profile.beProfile = beProfile;
+          profile.feProfile = feProfile ?? null;
+          profile.beProfile = beProfile ?? null;
           profile.ssProfile = ssProfile;
 
+          console.log('====================================');
+          console.log(profile.feProfile);
+          console.log('====================================');
           await transactionalEntityManager.query('SET FOREIGN_KEY_CHECKS=0');
           await transactionalEntityManager.save(Profile, profile);
           await transactionalEntityManager.query('SET FOREIGN_KEY_CHECKS=1');
