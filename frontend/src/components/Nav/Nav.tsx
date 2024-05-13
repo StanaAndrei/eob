@@ -18,13 +18,15 @@ export default function Nav(): ReturnType<React.FC> {
         {tokData?.rolePriority === 2 && <li className="nav-item">
           <a href={`/newbies/${tokData.id}`} className="nav-link">Newbies</a>
         </li>}
-        <li className="nav-item">
-          <a href="#" className="nav-link">Contact</a>
+        {
+          tokData?.rolePriority === 3 && <li className="nav-item">
+          <a href="/emps" className="nav-link">Emps</a>
         </li>
+        }
       </ul>
       {/* Right-aligned elements */}
       <div className="right-aligned">
-        {!isAuth ? <a href='/login'>login</a> : <a href='/logout'>logout</a> }
+        {!isAuth ? <a href='/login' className='nav-link'>login</a> : <a href='/logout'>logout</a> }
       </div>
     </nav>
   );

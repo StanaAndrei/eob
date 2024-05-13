@@ -25,6 +25,13 @@ import { ROLE_PRIORITY, RolesPriority } from '../auth/role.guard';
 export class UserController {
   constructor(private userService: UserService) {}
 
+  @Get('my-employees')
+  @RolesPriority(ROLE_PRIORITY.MANAGER)
+  async getMyEmployees(@Req() request: Request) {
+    const id = request['user_id'];    
+    return await this.userService.getMyEmployees(id);
+  }
+
   @Get('/:id')
   async getWithProfile(@Param('id') id: number) {
     const userWithProfile = await this.userService.getWithProfile(id);
@@ -54,13 +61,6 @@ export class UserController {
     if (!ok) {
       throw new InternalServerErrorException();
     }
-  }
-
-  @Get('my-employees')
-  @RolesPriority(ROLE_PRIORITY.MANAGER)
-  async getMyEmployees(@Req() request: Request) {
-    const id = request['user_id'];
-    return await this.userService.getMyEmployees(id);
   }
 
   @Patch('change-password/:newPassword')
