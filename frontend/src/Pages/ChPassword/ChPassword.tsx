@@ -24,7 +24,7 @@ function ChPassword(): ReturnType<React.FC> {
     <div>
       <form action="" onSubmit={handleSubmit}>
         <input type="password" onChange={e => setPassword(e.target.value)} />
-        <input type="password" onChange={e => setPassword(e.target.value)} />
+        <input type="password" onChange={e => setCpassword(e.target.value)} />
         <button type='submit'></button>
       </form>
     </div>
