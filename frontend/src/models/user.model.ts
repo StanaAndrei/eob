@@ -47,6 +47,8 @@ export const ROLE_MAPPING = new Map<number, string>([
 ]);
 
 export default interface User {
+    id: number;
+    buddyId?: number;
     name: string;
     paused: boolean;
     profile?: Profile;
