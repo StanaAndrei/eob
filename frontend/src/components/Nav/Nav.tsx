@@ -26,7 +26,9 @@ export default function Nav(): ReturnType<React.FC> {
       </ul>
       {/* Right-aligned elements */}
       <div className="right-aligned">
-        {!isAuth ? <a href='/login' className='nav-link'>login</a> : <a href='/logout'>logout</a> }
+        {!isAuth ? 
+        <a href='/login' className='nav-link'>login</a> : 
+        <a className='nav-link' href='/logout'>logout</a> }
       </div>
     </nav>
   );
