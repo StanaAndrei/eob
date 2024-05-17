@@ -31,11 +31,14 @@ export class UserSubscriber implements EntitySubscriberInterface<User> {
   }
 
   async beforeUpdate(event: UpdateEvent<User>): Promise<any> {
-    const isPasswordUpdate = event.updatedColumns.some(
-      (col) => col.propertyName === 'password',
-    );
-    if (isPasswordUpdate) {
-      await this.encryptPassword(event.entity as User);
+    const user = event.entity as User;
+    for (const uc of event.updatedColumns) {
+      if (uc.propertyName === 'password') {
+        await this.encryptPassword(user);
+      }
+      if (uc.propertyName === 'buddyId' && !user.isOld) {
+        user.matchDate = new Date();
+      }
     }
   }
 

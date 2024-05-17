@@ -1,3 +1,5 @@
+import moment from 'moment';
+
 export interface FeProfileI {
     fws: string[];
     htmlLvl: number;
@@ -55,6 +57,12 @@ export default interface User {
     rolePriority: number;
     email: string;
     createdAt: string;
+    matchDate?: string;
+}
+
+export function isRecent(user: User): boolean {
+    const diffInDays = moment().diff(user.matchDate, 'days');
+    return diffInDays <= 1;
 }
 
 export const DEFAULT_PROFILE: Profile = {

@@ -66,6 +66,12 @@ export class CreateUserMig1712489007570 implements MigrationInterface {
             type: 'bool',
             default: false,
           },
+          {
+            name: 'match_date',
+            type: 'timestamp',
+            isNullable: true,
+            default: null,
+          },
         ],
       }),
       true,

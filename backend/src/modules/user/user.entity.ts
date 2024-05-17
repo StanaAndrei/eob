@@ -98,4 +98,7 @@ export class User extends BaseEntity {
     this.paused = !this.paused;
     await this.save();
   }
+
+  @Column()
+  matchDate: Date;
 }
