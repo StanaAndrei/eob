@@ -85,7 +85,7 @@ export class ProfileService {
             await transactionalEntityManager.delete(
               FEProfile,
               profile.feProfileId,
-            );//*/
+            ); //*/
           }
           if (beProfile) {
             await transactionalEntityManager.save(BEProfile, beProfile);
@@ -101,9 +101,6 @@ export class ProfileService {
           profile.beProfile = beProfile ?? null;
           profile.ssProfile = ssProfile;
 
-          console.log('====================================');
-          console.log(profile.feProfile);
-          console.log('====================================');
           await transactionalEntityManager.query('SET FOREIGN_KEY_CHECKS=0');
           await transactionalEntityManager.save(Profile, profile);
           await transactionalEntityManager.query('SET FOREIGN_KEY_CHECKS=1');
@@ -128,21 +125,20 @@ export class ProfileService {
     try {
       if (targetUser?.profile?.feProfile) {
         const fePotUsers = await User.findByProfile('fe', targetUser.managerId);
-        const newbieFws = targetUser.profile.feProfile.fws;
-        const newbieTools = targetUser.profile.feProfile.tools;
-        //console.log(fePotUsers);
+        const targetFws = targetUser.profile.feProfile.fws;
+        const targetTools = targetUser.profile.feProfile.tools;
         for (const fePotUser of fePotUsers) {
           if (
-            fePotUser.isOld !== targetUser.isOld ||
+            fePotUser.isOld === targetUser.isOld ||
             fePotUser.id === targetUser.id
           ) {
             continue;
           }
-          const buddyFws = fePotUser.profile.feProfile.fws;
-          const buddyTools = fePotUser.profile.feProfile.tools;
+          const pairFws = fePotUser.profile.feProfile.fws;
+          const pairTools = fePotUser.profile.feProfile.tools;
           const simScores = [
-            getScoreOfArr(newbieFws, buddyFws),
-            getScoreOfArr(newbieTools, buddyTools),
+            getScoreOfArr(targetFws, pairFws),
+            getScoreOfArr(targetTools, pairTools),
           ];
           if (bestMatch.simScores < simScores) {
             bestMatch = { simScores, id: fePotUser.id };
@@ -164,26 +160,25 @@ export class ProfileService {
       }
       if (targetUser?.profile?.beProfile) {
         const bePotUsers = await User.findByProfile('be', targetUser.managerId);
-        const newbieFws = targetUser.profile.feProfile.fws;
-        const newbieLangs = targetUser.profile.feProfile.tools;
+        const targetFws = targetUser.profile.beProfile.fws;
+        const targetLangs = targetUser.profile.beProfile.plangs;
         for (const bePotUser of bePotUsers) {
           if (
-            bePotUser.isOld !== targetUser.isOld ||
+            bePotUser.isOld === targetUser.isOld ||
             bePotUser.id === targetUser.id
           ) {
             continue;
           }
-          const buddyFws = bePotUser.profile.feProfile.fws;
-          const buddyTools = bePotUser.profile.feProfile.tools;
+          const pairFws = bePotUser.profile.beProfile.fws;
+          const pairPlangs = bePotUser.profile.beProfile.plangs;
           const simScores = [
-            getScoreOfArr(newbieFws, buddyFws),
-            getScoreOfArr(newbieLangs, buddyTools),
+            getScoreOfArr(targetFws, pairFws),
+            getScoreOfArr(targetLangs, pairPlangs),
           ];
           if (bestMatch.simScores < simScores) {
             bestMatch = { simScores, id: bePotUser.id };
           }
         }
-        //console.log(bestMatch);
         if (bestMatch.id !== -1) {
           if (!targetUser.isOld) {
             return await this.userService.manualMatch(

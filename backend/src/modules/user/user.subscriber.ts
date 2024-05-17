@@ -31,7 +31,12 @@ export class UserSubscriber implements EntitySubscriberInterface<User> {
   }
 
   async beforeUpdate(event: UpdateEvent<User>): Promise<any> {
-    await this.encryptPassword(event.entity as User);
+    const isPasswordUpdate = event.updatedColumns.some(
+      (col) => col.propertyName === 'password',
+    );
+    if (isPasswordUpdate) {
+      await this.encryptPassword(event.entity as User);
+    }
   }
 
   private async encryptPassword(user: User) {

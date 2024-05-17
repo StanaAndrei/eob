@@ -10,7 +10,6 @@ function Newbies(): ReturnType<React.FC> {
 
   React.useEffect(() => {
     axiosAuthInstToSv.get(`/user/newbies-of/${userId}`).then(res => {
-      console.log(res.data);
       setNewbies(res.data);
     }).catch(err => {
       console.error(err);

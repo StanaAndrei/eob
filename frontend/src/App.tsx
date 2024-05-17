@@ -24,6 +24,7 @@ function App(): ReturnType<React.FC> {
     <Nav />
     <Routes>
 
+      <Route index path='' element={ <Home /> } />
       <Route path='/home' element={ <Home /> } />
       <Route path='/edit-profile/:userId' element={ <EditProfile /> } />
       <Route path='/logout' element={ <Logout /> } />

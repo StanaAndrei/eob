@@ -54,6 +54,7 @@ export default interface User {
     profile?: Profile;
     rolePriority: number;
     email: string;
+    createdAt: string;
 }
 
 export const DEFAULT_PROFILE: Profile = {

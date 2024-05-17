@@ -28,7 +28,7 @@ export class UserController {
   @Get('my-employees')
   @RolesPriority(ROLE_PRIORITY.MANAGER)
   async getMyEmployees(@Req() request: Request) {
-    const id = request['user_id'];    
+    const id = request['user_id'];
     return await this.userService.getMyEmployees(id);
   }
 

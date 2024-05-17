@@ -25,7 +25,8 @@ export class AuthController {
       throw new InternalServerErrorException();
     }
     if (res.err) {
-      throw new UnauthorizedException(res);
+      console.log(res.err);
+      throw new UnauthorizedException(res.err);
     }
     return res;
   }
