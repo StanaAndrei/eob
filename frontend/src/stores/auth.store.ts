@@ -6,6 +6,7 @@ export interface TokData {
     id: number;
     rolePriority: number,
     iat: number,
+    changedPassword: boolean,
 }
 
 export interface AuthState {
