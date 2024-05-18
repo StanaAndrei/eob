@@ -2,14 +2,29 @@ import React from 'react';
 import { axiosInstToSv } from '../../network/server.net';
 import { AxiosResponse } from 'axios';
 import useAuthStore from '../../stores/auth.store';
-import { Navigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 
 function Login(): ReturnType<React.FC> {
 
-  const [authToken, setAuthToken] = useAuthStore(({ authToken, setAuthToken }) => [authToken, setAuthToken]);
-  if (authToken != null) {
-    return <Navigate to={'/home'} replace={true} />
-  }
+  const navigate = useNavigate();
+
+  const [authToken, setAuthToken, tokData] = useAuthStore(({ authToken, setAuthToken, getTokData }) => [
+    authToken, setAuthToken, getTokData()
+  ]);
+
+  React.useEffect(() => {
+    if (tokData && !tokData.changedPassword && tokData.rolePriority === 1) {
+      navigate('/change-password', {
+        state: {
+          changedPassword: true
+        }
+      });
+    } else if (authToken != null) {
+      navigate('/home');
+    }
+  }, [authToken, tokData, navigate])
+
+  
 
   const handleSubmit: React.FormEventHandler<HTMLFormElement> = (e: React.SyntheticEvent) => {
     e.preventDefault();

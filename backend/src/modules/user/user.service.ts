@@ -89,12 +89,10 @@ export class UserService {
       const user = await User.findOne({
         where: { id },
       });
-      if (user.changedPassword) {
-        return false;
-      }
       user.changedPassword = true;
       user.password = newPassword;
       await user.save();
+      return true;
     } catch (err) {
       console.error(err);
       return false;
