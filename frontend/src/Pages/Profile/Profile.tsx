@@ -67,6 +67,9 @@ function Profile(): ReturnType<React.FC> {
         <Link to={`/edit-profile/${userId}`}>Edit/Add profile</Link>
       </div>
       <div>
+        <Link to={`/change-password`}>Change password</Link>
+      </div>
+      <div>
         {userData?.rolePriority === 2 && <button onClick={togglePaused}>Toggle paused!</button> }
       </div>
     </>

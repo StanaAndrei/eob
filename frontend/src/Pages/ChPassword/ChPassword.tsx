@@ -1,7 +1,7 @@
 import React from 'react';
 import { axiosAuthInstToSv } from '../../network/server.net';
 import { useLocation, useNavigate } from 'react-router';
-import { Bounce, ToastContainer, toast } from 'react-toastify';
+import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
 function ChPassword(): ReturnType<React.FC> {
@@ -11,7 +11,7 @@ function ChPassword(): ReturnType<React.FC> {
   const navigate = useNavigate();
 
   React.useEffect(() => {
-    if (location.state.changedPassword) {
+    if (location.state?.changedPassword) {
       toast.warn('We suggest to change the 1st password!!!', {
         autoClose: 3000,
       });
