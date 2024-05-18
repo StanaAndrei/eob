@@ -10,6 +10,14 @@ interface OptionTp {
   id: number;
 }
 
+interface MiniBoxProps {
+  user: User;
+}
+
+const MiniBox : React.FC<MiniBoxProps> = ({ user }) => !user ? null : <div>
+  buddy: <a href={`/profile/${user.id}`}>{user.name}</a>
+</div>
+
 function Emps(): ReturnType<React.FC> {
 
   const [users, setUsers] = React.useState<User[]>([]);
@@ -53,10 +61,11 @@ function Emps(): ReturnType<React.FC> {
       {
         users.map((elem, id) => {
           return <div className='Ebox' key={id}>
-            {elem.name}{'  '}{elem.rolePriority === 2 ? 'BUDDY' : 'NEWBIE'}
+            <a href={`/profile/${elem.id}`}>{elem.name}</a>
+            {'  '}{elem.rolePriority === 2 ? 'BUDDY' : 'NEWBIE'}
             {' '}
             {elem.rolePriority === 1 && 
-              `(buddy: ${users.find(({ id }) => id === elem.buddyId)?.name ?? 'none'})`
+              <MiniBox user={users[users.findIndex(({ id }) => id === elem.buddyId)]} />
             }
             {elem.rolePriority === 1 && 
             <Multiselect 

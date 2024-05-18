@@ -53,6 +53,8 @@ function Login(): ReturnType<React.FC> {
         <input placeholder='password' type="password" id='password' /><br />
         <button type='submit'>submit</button>
       </form>
+      No account?
+      <a href="/register">Sign up</a>
     </div>
   );
 }

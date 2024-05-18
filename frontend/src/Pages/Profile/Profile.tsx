@@ -14,6 +14,7 @@ import { HttpStatusCode } from 'axios';
 function Profile(): ReturnType<React.FC> {
   const { userId } = useParams();
   const [userData, setUserData] = React.useState<User | null>(null);
+  const [buddyData, setBuddyData] = React.useState<User | null>(null);
 
   React.useEffect(() => {
     console.log(userId);
@@ -25,6 +26,17 @@ function Profile(): ReturnType<React.FC> {
       alert('ERROR')
     })
   }, [userId])
+
+  React.useEffect(() => {
+    if (userData?.buddyId) {
+      axiosAuthInstToSv.get(`/user/${userData.buddyId}`).then(res => {
+        setBuddyData(res.data);
+      }).catch(err => {
+        console.error(err);
+        alert('ERROR');
+      })
+    }
+  }, [userData])
 
   const togglePaused = (e: React.SyntheticEvent) => {
     e.preventDefault();
@@ -71,6 +83,9 @@ function Profile(): ReturnType<React.FC> {
       </div>
       <div>
         {userData?.rolePriority === 2 && <button onClick={togglePaused}>Toggle paused!</button> }
+        {buddyData && <div>
+          buddy: <a href={`/profile/${buddyData.id}`}>{buddyData.name}</a>
+        </div> }
       </div>
     </>
   );

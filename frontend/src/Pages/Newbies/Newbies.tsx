@@ -29,7 +29,7 @@ function Newbies(): ReturnType<React.FC> {
         key={id}
         style={{ backgroundColor: isRecent(e) ? 'red' : '' }}
         >
-          <p>{e.email}, {e.name}</p>
+          <p>{e.email}, <a href={`/profile/${e.id}`}>{e.name}</a> </p>
         </div> )
       }
     </div>

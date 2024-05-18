@@ -23,6 +23,11 @@ export default function Nav(): ReturnType<React.FC> {
           <a href="/emps" className="nav-link">Emps</a>
         </li>
         }
+        {
+          tokData?.rolePriority === 3 && <li className="nav-item">
+          <a href="/create-other" className="nav-link">MakeOther</a>
+        </li>
+        }
       </ul>
       {/* Right-aligned elements */}
       <div className="right-aligned">

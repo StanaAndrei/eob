@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { User } from './user.entity';
 import { UserDTO } from './dtos/user.dto';
 import { MailService } from '../mail/mail.service';
-import { DETAILS_SUBJECT } from '../mail/mail.consts';
+import { DETAILS_SUBJECT, MATCHED_SUBJECT } from '../mail/mail.consts';
 import { OtherUserDTO } from './dtos/other.dto';
 
 @Injectable()
@@ -121,6 +121,25 @@ export class UserService {
       }
       newbie.buddyId = buddyId;
       await newbie.save();
+      const buddy = await User.findOne({
+        where: { id: buddyId },
+      });
+      await this.mailService.sendEmail(
+        newbie.email,
+        MATCHED_SUBJECT,
+        './matched',
+        {
+          pairName: buddy.name,
+        },
+      );
+      await this.mailService.sendEmail(
+        buddy.email,
+        MATCHED_SUBJECT,
+        './matched',
+        {
+          pairName: newbie.name,
+        },
+      );
       return true;
     } catch (err) {
       console.error(err);

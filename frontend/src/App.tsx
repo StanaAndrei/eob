@@ -17,6 +17,7 @@ import RegisterOther from './Pages/RegisterOther/RegisterOther';
 import Newbies from './Pages/Newbies/Newbies';
 import Emps from './Pages/Emps/Emps';
 import ChPassword from './Pages/ChPassword/ChPassword';
+import CreateOther from './Pages/CreateOther/CreateOther';
 
 function App(): ReturnType<React.FC> {
 
@@ -34,6 +35,7 @@ function App(): ReturnType<React.FC> {
       <Route path='/newbies/:userId' element={ <Newbies /> } />
       <Route path='/emps' element={ <Emps /> } />
       <Route path='/change-password' element={ <ChPassword /> } />
+      <Route path='/create-other' element={ <CreateOther /> } />
 
 
       <Route path='/login' element={ <Login /> } />
