@@ -30,9 +30,7 @@ function BeProfile({ beProfile, setNewUserProfile }: {
 
 
   const [newBeProfState, setnewBeProfState] = React.useState<BeProfileI>(beProfile);
-  const otherFwRef: React.LegacyRef<HTMLInputElement> = React.useRef(null);
-  const otherPlRef: React.LegacyRef<HTMLInputElement> = React.useRef(null);
-
+  
   React.useEffect(() => {
     setNewUserProfile(prevState => ({
       ...(prevState || {}),
@@ -87,22 +85,62 @@ function BeProfile({ beProfile, setNewUserProfile }: {
     }));
   }
 
-  const updateFwTxt = () => {
-    if (otherFwRef.current !== null && otherFwRef.current?.value !== undefined) {
-      setnewBeProfState((prevState: BeProfileI) => ({
+  const updateFwTxt = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { value } = e.target;
+    const inputFws = Array.from(new Set(value.split(',').map(item => item.trim()).filter(Boolean))); // Remove duplicates and empty strings
+
+    setnewBeProfState(prevState => {
+      const currentFwsSet = new Set(prevState.fws);
+      const inputFwsSet = new Set(inputFws);
+
+      const additions = inputFws.filter(item => !currentFwsSet.has(item));
+      const deletions = prevState.fws.filter(item => !inputFwsSet.has(item));
+
+      // Add new items
+      const updatedFws = [...prevState.fws, ...additions];
+
+      // Remove deleted items
+      for (const item of deletions) {
+        const index = updatedFws.indexOf(item);
+        if (index > -1 && !doInter<string>(fwArr, prevState.fws).includes(item)) {
+          updatedFws.splice(index, 1);
+        }
+      }
+
+      return {
         ...prevState,
-        fws: Array.from(new Set([...prevState.fws, ...otherFwRef.current!.value.split(',')])),
-      }))
-    } 
+        fws: updatedFws
+      };
+    });
   }
 
-  const updatePlTxt = () => {
-    if (otherPlRef.current !== null && otherPlRef.current?.value !== undefined) {
-      setnewBeProfState((prevState: BeProfileI) => ({
+  const updatePlTxt = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { value } = e.target;
+    const inputPlans = Array.from(new Set(value.split(',').map(item => item.trim()).filter(Boolean))); // Remove duplicates and empty strings
+
+    setnewBeProfState(prevState => {
+      const currentPlangsSet = new Set(prevState.plangs);
+      const inputPlangsSet = new Set(inputPlans);
+
+      const additions = inputPlans.filter(item => !currentPlangsSet.has(item));
+      const deletions = prevState.plangs.filter(item => !inputPlangsSet.has(item));
+
+      // Add new items
+      const updatedPlangs = [...prevState.plangs, ...additions];
+
+      // Remove deleted items
+      for (const item of deletions) {
+        const index = updatedPlangs.indexOf(item);
+        if (index > -1 && !doInter<string>(plArr, prevState.plangs).includes(item)) {
+          updatedPlangs.splice(index, 1);
+        }
+      }
+
+      return {
         ...prevState,
-        plangs: [...prevState.plangs, ...otherPlRef.current!.value.split(',')]
-      }))
-    }   
+        plangs: updatedPlangs
+      };
+    });
   }
 
   React.useEffect(() => {
@@ -132,7 +170,7 @@ function BeProfile({ beProfile, setNewUserProfile }: {
       <input name="fws" value={'Spring'} type="checkbox" defaultChecked={springChecked} onChange={handleCheckboxChange} /> Spring boot <br />
       <input name="fws" value={'.net'} type="checkbox" defaultChecked={aspChecked} onChange={handleCheckboxChange} /> ASP.NET <br />
       <input name="fws" value={'other'} type="checkbox" defaultChecked={otherFwChecked} onChange={handleCheckboxChange} /> Other: 
-      <input type="text" ref={otherFwRef} disabled={!otherFwChecked} onBlur={updateFwTxt} 
+      <input type="text" disabled={!otherFwChecked} onBlur={updateFwTxt} 
         defaultValue={!otherFwChecked ? undefined : doDiff<string>(beProfile.fws, fwArr).join(',')}
       /> <br />
       <h4>Programming languages:</h4>
@@ -144,7 +182,7 @@ function BeProfile({ beProfile, setNewUserProfile }: {
       <input name="plangs" value={'other'} type="checkbox" defaultChecked={otherPlChecked} onChange={handleCheckboxChange} /> Other: 
       <input type="text"
         defaultValue={!otherPlChecked ? undefined : doDiff<string>(beProfile.plangs, plArr).join(',')}
-        ref={otherPlRef} disabled={!otherPlChecked} onBlur={updatePlTxt} 
+        disabled={!otherPlChecked} onBlur={updatePlTxt} 
       /> <br />
       <h4>Tools:</h4>
       <table>

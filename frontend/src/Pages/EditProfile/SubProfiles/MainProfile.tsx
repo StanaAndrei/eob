@@ -38,10 +38,30 @@ function MainProfile({ profile, setStack, setNewUserProfile }: {
     }
   }
 
-  const handleTxtInpChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleInpBlur = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { value } = e.target;
-    setIndType(prevState => [...prevState, ...value.split(',')]);
-  }
+    const inputFws = Array.from(new Set(value.split(',').map(item => item.trim()).filter(Boolean)));
+    setIndType((prevState: string[]) => {
+      const currentFwsSet = new Set(prevState);
+      const inputFwsSet = new Set(inputFws);
+
+      const additions = inputFws.filter(item => !currentFwsSet.has(item));
+      const deletions = prevState.filter(item => !inputFwsSet.has(item));
+
+      // Add new items
+      const updatedFws = [...prevState, ...additions];
+
+      // Remove deleted items
+      for (const item of deletions) {
+        const index = updatedFws.indexOf(item);
+        if (index > -1 && !doInter<string>(indArr, prevState).includes(item)) {
+          updatedFws.splice(index, 1);
+        }
+      }
+
+      return updatedFws;
+    });
+  };
 
   React.useEffect(() => {
     if (!otherChecked) {
@@ -71,7 +91,7 @@ function MainProfile({ profile, setStack, setNewUserProfile }: {
           } /> Other:
            <input type='text'
               defaultValue={doDiff<string>(profile.indType as string[], indArr).join(',')}
-              disabled={!otherChecked} onBlur={handleTxtInpChange} 
+              disabled={!otherChecked} onBlur={handleInpBlur} 
             />
         </div>
         <br />
