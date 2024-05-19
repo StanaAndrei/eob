@@ -15,18 +15,35 @@ function FeProfile({ feProfile, setNewUserProfile }: {
   );
 
   const handleCBChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { value, name } = e.target;
-    setnewFeProfile((prevState: FeProfileI) => ({
-      ...prevState,
-      [name]: Array.from(new Set([...prevState[name as keyof FeProfileI] as string[], value])),
-    }));
+    const { value, name, checked } = e.target;
+    console.log('====================================');
+    console.log(checked);
+    console.log('====================================');
+    if (checked) {
+      setnewFeProfile((prevState: FeProfileI) => ({
+        ...prevState,
+        [name]: Array.from(new Set([...prevState[name as keyof FeProfileI] as string[], value])),
+      }));
+    } else {
+      setnewFeProfile((prevState: FeProfileI): FeProfileI => {
+        const auxState: FeProfileI = {...prevState};
+        let aux: string[] = [...auxState[name as keyof FeProfileI] as string[]];
+        aux = aux.filter(e => e !== value)
+        if (name === 'fws') {
+          auxState.fws = aux;
+        } else {
+          auxState.tools = aux;
+        }
+        return auxState;
+      })
+    }
   };
     
   const handleInpBlur = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { value, name } = e.target;
     setnewFeProfile((prevState: FeProfileI) => ({
       ...prevState,
-      [name]: name.split(',').length > doDiff<string>([...prevState[name as keyof FeProfileI] as string[]], fwsArr).length ?
+      [name]: value.split(',').length < doDiff<string>([...prevState[name as keyof FeProfileI] as string[]], fwsArr).length ?
       Array.from(new Set(Array.from(new Set([...prevState[name as keyof FeProfileI] as string[], ...value.split(',')]))))
       : doInter<string>(Array.from(
         new Set(Array.from(new Set([...prevState[name as keyof FeProfileI] as string[], ...value.split(',')])))),
