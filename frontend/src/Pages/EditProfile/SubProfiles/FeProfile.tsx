@@ -40,16 +40,32 @@ function FeProfile({ feProfile, setNewUserProfile }: {
   };
     
   const handleInpBlur = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { value, name } = e.target;
-    setnewFeProfile((prevState: FeProfileI) => ({
-      ...prevState,
-      [name]: value.split(',').length < doDiff<string>([...prevState[name as keyof FeProfileI] as string[]], fwsArr).length ?
-      Array.from(new Set(Array.from(new Set([...prevState[name as keyof FeProfileI] as string[], ...value.split(',')]))))
-      : doInter<string>(Array.from(
-        new Set(Array.from(new Set([...prevState[name as keyof FeProfileI] as string[], ...value.split(',')])))),
-        [...prevState[name as keyof FeProfileI] as string[]]
-      ),
-    }));
+    const { value } = e.target;
+    const inputFws = Array.from(new Set(value.split(',').map(item => item.trim()).filter(Boolean))); // Remove duplicates and empty strings
+
+    setnewFeProfile(prevState => {
+      const currentFwsSet = new Set(prevState.fws);
+      const inputFwsSet = new Set(inputFws);
+
+      const additions = inputFws.filter(item => !currentFwsSet.has(item));
+      const deletions = prevState.fws.filter(item => !inputFwsSet.has(item));
+
+      // Add new items
+      const updatedFws = [...prevState.fws, ...additions];
+
+      // Remove deleted items
+      for (const item of deletions) {
+        const index = updatedFws.indexOf(item);
+        if (index > -1 && !doInter<string>(fwsArr, prevState.fws).includes(item)) {
+          updatedFws.splice(index, 1);
+        }
+      }
+
+      return {
+        ...prevState,
+        fws: updatedFws
+      };
+    });
   };
 
   const handleRadioChange = (e: React.ChangeEvent<HTMLInputElement>) => {
