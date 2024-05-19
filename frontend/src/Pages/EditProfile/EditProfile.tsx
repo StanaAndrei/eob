@@ -94,6 +94,9 @@ function EditProfile(): ReturnType<React.FC> {
 
   const goForward = () => {
     let nxtId = formIndex + 1;
+    console.log('====================================');
+    console.log(newUserProfile);
+    console.log('====================================');
     if (nxtId === forms.length) {
       console.log('lalal', newUserProfile);
       if (userProfile !== DEFAULT_PROFILE) {

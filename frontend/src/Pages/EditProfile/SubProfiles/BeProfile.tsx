@@ -2,7 +2,7 @@ import React from 'react';
 import { BeProfileI, DEFAULT_PROFILE, Profile } from '../../../models/user.model';
 import { doDiff, doInter } from '../../../utils/arrset';
 const fwArr = ['Node', 'Django', 'Ror', 'Spring', '.net'];
-const plArr = ['Java', 'Python', 'Ruby', 'Php', 'Cs'];
+const plArr = ['Java', 'Python', 'Ruby', 'Php', 'C#'];
 
 
 function BeProfile({ beProfile, setNewUserProfile }: {
@@ -23,7 +23,7 @@ function BeProfile({ beProfile, setNewUserProfile }: {
   const [pyChecked] = React.useState<boolean>(beProfile.plangs.includes('Python'));
   const [rubyChecked] = React.useState<boolean>(beProfile.plangs.includes('Ruby'));
   const [phpChecked] = React.useState<boolean>(beProfile.plangs.includes('Php'));
-  const [csChecked] = React.useState<boolean>(beProfile.plangs.includes('Cs'));
+  const [csChecked] = React.useState<boolean>(beProfile.plangs.includes('C#'));
   const [otherPlChecked, setOtherPlChecked] = React.useState<boolean>(
     () => doDiff<string>(beProfile.plangs, plArr).length > 0 && beProfile !== DEFAULT_PROFILE.beProfile
   );
@@ -91,7 +91,7 @@ function BeProfile({ beProfile, setNewUserProfile }: {
     if (otherFwRef.current !== null && otherFwRef.current?.value !== undefined) {
       setnewBeProfState((prevState: BeProfileI) => ({
         ...prevState,
-        fws: [...prevState.fws, ...otherFwRef.current!.value.split(',')]
+        fws: Array.from(new Set([...prevState.fws, ...otherFwRef.current!.value.split(',')])),
       }))
     } 
   }

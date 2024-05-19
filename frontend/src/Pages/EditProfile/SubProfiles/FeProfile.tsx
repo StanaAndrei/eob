@@ -18,7 +18,7 @@ function FeProfile({ feProfile, setNewUserProfile }: {
     const { value, name } = e.target;
     setnewFeProfile((prevState: FeProfileI) => ({
       ...prevState,
-      [name]: [...prevState[name as keyof FeProfileI] as string[], value],
+      [name]: Array.from(new Set([...prevState[name as keyof FeProfileI] as string[], value])),
     }));
   };
     
@@ -26,7 +26,12 @@ function FeProfile({ feProfile, setNewUserProfile }: {
     const { value, name } = e.target;
     setnewFeProfile((prevState: FeProfileI) => ({
       ...prevState,
-      [name]: [...prevState[name as keyof FeProfileI] as string[], ...value.split(',')],
+      [name]: name.split(',').length > doDiff<string>([...prevState[name as keyof FeProfileI] as string[]], fwsArr).length ?
+      Array.from(new Set(Array.from(new Set([...prevState[name as keyof FeProfileI] as string[], ...value.split(',')]))))
+      : doInter<string>(Array.from(
+        new Set(Array.from(new Set([...prevState[name as keyof FeProfileI] as string[], ...value.split(',')])))),
+        [...prevState[name as keyof FeProfileI] as string[]]
+      ),
     }));
   };
 
