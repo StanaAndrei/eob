@@ -4,6 +4,7 @@ import { NestExpressApplication } from '@nestjs/platform-express';
 import helmet from 'helmet';
 import { ValidationPipe } from '@nestjs/common';
 import morgan from 'morgan';
+import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 
 async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule);
@@ -16,7 +17,15 @@ async function bootstrap() {
   app.use(helmet());
   app.setGlobalPrefix('api');
   app.useGlobalPipes(new ValidationPipe());
+
+  const config = new DocumentBuilder()
+    .setTitle('<UNK>')
+    .setDescription('<UNK>')
+    .build();
+  const docFactory = () => SwaggerModule.createDocument(app, config);
+  SwaggerModule.setup('api-docs', app, docFactory);
+
   await app.listen(3001);
   console.log('WORKS');
 }
-bootstrap();
+bootstrap().then(_ => {});
