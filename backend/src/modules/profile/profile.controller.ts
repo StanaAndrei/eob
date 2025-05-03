@@ -10,7 +10,10 @@ import {
 } from '@nestjs/common';
 import { ProfileDTO } from './profile.dto';
 import { ProfileService } from './profile.service';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 
+@ApiBearerAuth('access-token')
+@ApiTags('Profile')
 @Controller('profile')
 export class ProfileController {
   constructor(private profileService: ProfileService) {}

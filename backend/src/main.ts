@@ -21,7 +21,13 @@ async function bootstrap() {
   const config = new DocumentBuilder()
     .setTitle('<UNK>')
     .setDescription('<UNK>')
-    .build();
+    .addBearerAuth({
+      type: 'http',
+      scheme: 'bearer',
+      bearerFormat: 'JWT',
+      name: 'Authorization',
+      in: 'header',
+    }, 'access-token').build();
   const docFactory = () => SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('api-docs', app, docFactory);
 

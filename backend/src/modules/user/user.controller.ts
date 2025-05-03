@@ -19,7 +19,10 @@ import { AllowAnon } from '../auth/auth.guard';
 import { UserInterceptor } from './user.interceptor';
 import { OtherUserDTO } from './dtos/other.dto';
 import { ROLE_PRIORITY, RolesPriority } from '../auth/role.guard';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 
+@ApiBearerAuth('access-token')
+@ApiTags('Users')
 @Controller('user')
 @UseInterceptors(UserInterceptor)
 export class UserController {
@@ -34,8 +37,7 @@ export class UserController {
 
   @Get('/:id')
   async getWithProfile(@Param('id') id: number) {
-    const userWithProfile = await this.userService.getWithProfile(id);
-    return userWithProfile;
+    return await this.userService.getWithProfile(id);
   }
 
   @Post()
