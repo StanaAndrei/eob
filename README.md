@@ -1,4 +1,4 @@
-# fisProject
+# Employee Onboarding Buddy
 
 project for FIS course
 
