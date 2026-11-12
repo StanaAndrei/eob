@@ -12,6 +12,9 @@ export class MailService {
     context: any,
   ): Promise<void> {
     console.log('mail:', to, subject, template, context);
+    if (process.env.NODE_ENV === 'dev') {
+      return;
+    }
     //await this.mailerService.sendMail({ to, subject, template, context });
   }
 }

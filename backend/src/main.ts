@@ -32,6 +32,6 @@ async function bootstrap() {
   SwaggerModule.setup('api-docs', app, docFactory);
 
   await app.listen(3001);
-  console.log('WORKS');
+  console.log('WORKS', process.env.NODE_ENV);
 }
 bootstrap().then(_ => {});
