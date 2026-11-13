@@ -1,9 +1,22 @@
 import React from 'react';
+import Form from 'react-bootstrap/Form';
+import Row from 'react-bootstrap/Row';
+import Col from 'react-bootstrap/Col';
+import Card from 'react-bootstrap/Card';
+import Table from 'react-bootstrap/Table';
 import { BeProfileI, DEFAULT_PROFILE, Profile } from '../../../models/user.model';
 import { doDiff, doInter } from '../../../utils/arrset';
+
 const fwArr = ['Node', 'Django', 'Ror', 'Spring', '.net'];
 const plArr = ['Java', 'Python', 'Ruby', 'Php', 'C#'];
 
+const fwDisplayNames: Record<string, string> = {
+  Node: 'Node.js',
+  Django: 'Django',
+  Ror: 'Ruby on Rails',
+  Spring: 'Spring Boot',
+  '.net': 'ASP.NET',
+};
 
 function BeProfile({ beProfile, setNewUserProfile }: {
   beProfile: BeProfileI,
@@ -17,7 +30,7 @@ function BeProfile({ beProfile, setNewUserProfile }: {
   const [aspChecked] = React.useState<boolean>(beProfile.fws.includes('.net'));
   const [otherFwChecked, setOtherFwChecked] = React.useState<boolean>(
     () => doDiff<string>(beProfile.fws, fwArr).length > 0 && beProfile !== DEFAULT_PROFILE.beProfile
-);
+  );
 
   const [javaChecked] = React.useState<boolean>(beProfile.plangs.includes('Java'));
   const [pyChecked] = React.useState<boolean>(beProfile.plangs.includes('Python'));
@@ -28,15 +41,14 @@ function BeProfile({ beProfile, setNewUserProfile }: {
     () => doDiff<string>(beProfile.plangs, plArr).length > 0 && beProfile !== DEFAULT_PROFILE.beProfile
   );
 
-
   const [newBeProfState, setnewBeProfState] = React.useState<BeProfileI>(beProfile);
   
   React.useEffect(() => {
     setNewUserProfile(prevState => ({
       ...(prevState || {}),
       beProfile: {...newBeProfState},
-    }))
-  }, [setNewUserProfile, newBeProfState])
+    }));
+  }, [setNewUserProfile, newBeProfState]);
 
   const handleCheckboxChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, checked, value } = e.target;
@@ -64,15 +76,15 @@ function BeProfile({ beProfile, setNewUserProfile }: {
       if (name === 'fws') {
         setnewBeProfState((prevState: BeProfileI) => {
           const aux: BeProfileI = {...prevState};
-          aux.fws = aux.fws.filter(e => e !== value);
+          aux.fws = aux.fws.filter(el => el !== value);
           return aux;
-        })
+        });
       } else {
         setnewBeProfState((prevState: BeProfileI) => {
           const aux: BeProfileI = {...prevState};
-          aux.plangs = aux.plangs.filter(e => e !== value);
+          aux.plangs = aux.plangs.filter(el => el !== value);
           return aux;
-        })
+        });
       }
     }
   };
@@ -83,11 +95,11 @@ function BeProfile({ beProfile, setNewUserProfile }: {
       ...prevState,
       [name]: Number(value),
     }));
-  }
+  };
 
   const updateFwTxt = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { value } = e.target;
-    const inputFws = Array.from(new Set(value.split(',').map(item => item.trim()).filter(Boolean))); // Remove duplicates and empty strings
+    const inputFws = Array.from(new Set(value.split(',').map(item => item.trim()).filter(Boolean)));
 
     setnewBeProfState(prevState => {
       const currentFwsSet = new Set(prevState.fws);
@@ -96,10 +108,8 @@ function BeProfile({ beProfile, setNewUserProfile }: {
       const additions = inputFws.filter(item => !currentFwsSet.has(item));
       const deletions = prevState.fws.filter(item => !inputFwsSet.has(item));
 
-      // Add new items
       const updatedFws = [...prevState.fws, ...additions];
 
-      // Remove deleted items
       for (const item of deletions) {
         const index = updatedFws.indexOf(item);
         if (index > -1 && !doInter<string>(fwArr, prevState.fws).includes(item)) {
@@ -112,11 +122,11 @@ function BeProfile({ beProfile, setNewUserProfile }: {
         fws: updatedFws
       };
     });
-  }
+  };
 
   const updatePlTxt = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { value } = e.target;
-    const inputPlans = Array.from(new Set(value.split(',').map(item => item.trim()).filter(Boolean))); // Remove duplicates and empty strings
+    const inputPlans = Array.from(new Set(value.split(',').map(item => item.trim()).filter(Boolean)));
 
     setnewBeProfState(prevState => {
       const currentPlangsSet = new Set(prevState.plangs);
@@ -125,10 +135,8 @@ function BeProfile({ beProfile, setNewUserProfile }: {
       const additions = inputPlans.filter(item => !currentPlangsSet.has(item));
       const deletions = prevState.plangs.filter(item => !inputPlangsSet.has(item));
 
-      // Add new items
       const updatedPlangs = [...prevState.plangs, ...additions];
 
-      // Remove deleted items
       for (const item of deletions) {
         const index = updatedPlangs.indexOf(item);
         if (index > -1 && !doInter<string>(plArr, prevState.plangs).includes(item)) {
@@ -141,96 +149,184 @@ function BeProfile({ beProfile, setNewUserProfile }: {
         plangs: updatedPlangs
       };
     });
-  }
+  };
 
   React.useEffect(() => {
     if (!otherFwChecked) {
       setnewBeProfState(prevState => ({
         ...prevState,
         fws: doInter<string>(fwArr, beProfile.fws)
-      }))
+      }));
     }
-  }, [otherFwChecked, beProfile])
+  }, [otherFwChecked, beProfile]);
 
   React.useEffect(() => {
     if (!otherPlChecked) {
       setnewBeProfState(prevState => ({
         ...prevState,
         plangs: doInter<string>(plArr, beProfile.plangs)
-      }))
+      }));
     }
-  }, [otherPlChecked, beProfile])
+  }, [otherPlChecked, beProfile]);
+
+  const toolCategories = [
+    { key: 'dockerLvl', label: 'Docker', current: beProfile.dockerLvl },
+    { key: 'kuberLvl', label: 'Kubernetes', current: beProfile.kuberLvl },
+    { key: 'awsAzureGcpLvl', label: 'AWS / Azure / GCP', current: beProfile.awsAzureGcpLvl },
+    { key: 'sqlLvl', label: 'MySQL / PostgreSQL', current: beProfile.sqlLvl },
+  ];
 
   return (
     <div>
-      <h4>Frameworks:</h4>
-      <input name="fws" value={'Node'} type="checkbox" defaultChecked={nodeChecked} onChange={handleCheckboxChange} /> Node.js <br />
-      <input name="fws" value={'Django'} type="checkbox" defaultChecked={djangoChecked} onChange={handleCheckboxChange} /> Django <br />
-      <input name="fws" value={'Ror'} type="checkbox" defaultChecked={rorChecked} onChange={handleCheckboxChange} /> Ruby on rails <br />
-      <input name="fws" value={'Spring'} type="checkbox" defaultChecked={springChecked} onChange={handleCheckboxChange} /> Spring boot <br />
-      <input name="fws" value={'.net'} type="checkbox" defaultChecked={aspChecked} onChange={handleCheckboxChange} /> ASP.NET <br />
-      <input name="fws" value={'other'} type="checkbox" defaultChecked={otherFwChecked} onChange={handleCheckboxChange} /> Other: 
-      <input type="text" disabled={!otherFwChecked} onBlur={updateFwTxt} 
-        defaultValue={!otherFwChecked ? undefined : doDiff<string>(beProfile.fws, fwArr).join(',')}
-      /> <br />
-      <h4>Programming languages:</h4>
-      <input name="plangs" value={'Java'} type="checkbox" defaultChecked={javaChecked} onChange={handleCheckboxChange} /> Java <br />
-      <input name="plangs" value={'Python'} type="checkbox" defaultChecked={pyChecked} onChange={handleCheckboxChange} /> Python <br />
-      <input name="plangs" value={'Ruby'} type="checkbox" defaultChecked={rubyChecked} onChange={handleCheckboxChange} /> Ruby <br />
-      <input name="plangs" value={'Php'} type="checkbox" defaultChecked={phpChecked} onChange={handleCheckboxChange} /> Php <br />
-      <input name="plangs" value={'C#'} type="checkbox" defaultChecked={csChecked} onChange={handleCheckboxChange} /> C# <br />
-      <input name="plangs" value={'other'} type="checkbox" defaultChecked={otherPlChecked} onChange={handleCheckboxChange} /> Other: 
-      <input type="text"
-        defaultValue={!otherPlChecked ? undefined : doDiff<string>(beProfile.plangs, plArr).join(',')}
-        disabled={!otherPlChecked} onBlur={updatePlTxt} 
-      /> <br />
-      <h4>Tools:</h4>
-      <table>
-        <thead>
-          <tr>
-            <th></th>
-            <th>1</th>
-            <th>2</th>
-            <th>3</th>
-            <th>4</th>
-            <th>5</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <th>Docker</th>
-            <th><input onChange={setLvl} value={1} defaultChecked={beProfile.dockerLvl === 1} type="radio" name="dockerLvl" id="" /></th>
-            <th><input onChange={setLvl} value={2} defaultChecked={beProfile.dockerLvl === 2} type="radio" name="dockerLvl" id="" /></th>
-            <th><input onChange={setLvl} value={3} defaultChecked={beProfile.dockerLvl === 3} type="radio" name="dockerLvl" id="" /></th>
-            <th><input onChange={setLvl} value={4} defaultChecked={beProfile.dockerLvl === 4} type="radio" name="dockerLvl" id="" /></th>
-            <th><input onChange={setLvl} value={5} defaultChecked={beProfile.dockerLvl === 5} type="radio" name="dockerLvl" id="" /></th>
-          </tr>
-          <tr>
-            <th>Kuber</th>
-            <th><input onChange={setLvl} value={1} defaultChecked={beProfile.kuberLvl === 1} type="radio" name="kuberLvl" id="" /></th>
-            <th><input onChange={setLvl} value={2} defaultChecked={beProfile.kuberLvl === 2} type="radio" name="kuberLvl" id="" /></th>
-            <th><input onChange={setLvl} value={3} defaultChecked={beProfile.kuberLvl === 3} type="radio" name="kuberLvl" id="" /></th>
-            <th><input onChange={setLvl} value={4} defaultChecked={beProfile.kuberLvl === 4} type="radio" name="kuberLvl" id="" /></th>
-            <th><input onChange={setLvl} value={5} defaultChecked={beProfile.kuberLvl === 5} type="radio" name="kuberLvl" id="" /></th>
-          </tr>
-          <tr>
-            <th>Aws/Azure/Gcp</th>
-            <th><input onChange={setLvl} value={1} defaultChecked={beProfile.awsAzureGcpLvl === 1} type="radio" name="awsAzureGcpLvl" id="" /></th>
-            <th><input onChange={setLvl} value={2} defaultChecked={beProfile.awsAzureGcpLvl === 2} type="radio" name="awsAzureGcpLvl" id="" /></th>
-            <th><input onChange={setLvl} value={3} defaultChecked={beProfile.awsAzureGcpLvl === 3} type="radio" name="awsAzureGcpLvl" id="" /></th>
-            <th><input onChange={setLvl} value={4} defaultChecked={beProfile.awsAzureGcpLvl === 4} type="radio" name="awsAzureGcpLvl" id="" /></th>
-            <th><input onChange={setLvl} value={5} defaultChecked={beProfile.awsAzureGcpLvl === 5} type="radio" name="awsAzureGcpLvl" id="" /></th>
-          </tr>
-          <tr>
-            <th>Mysql/Pgsql</th>
-            <th><input onChange={setLvl} value={1} defaultChecked={beProfile.sqlLvl === 1} type="radio" name="sqlLvl" id="" /></th>
-            <th><input onChange={setLvl} value={2} defaultChecked={beProfile.sqlLvl === 2} type="radio" name="sqlLvl" id="" /></th>
-            <th><input onChange={setLvl} value={3} defaultChecked={beProfile.sqlLvl === 3} type="radio" name="sqlLvl" id="" /></th>
-            <th><input onChange={setLvl} value={4} defaultChecked={beProfile.sqlLvl === 4} type="radio" name="sqlLvl" id="" /></th>
-            <th><input onChange={setLvl} value={5} defaultChecked={beProfile.sqlLvl === 5} type="radio" name="sqlLvl" id="" /></th>
-          </tr>
-        </tbody>
-      </table>
+      <h4 className="fw-semibold text-dark mb-1">Backend Development</h4>
+      <p className="text-muted small mb-4">Specify your server-side frameworks, languages, and infrastructure skills</p>
+
+      {/* Frameworks */}
+      <Form.Group className="mb-4">
+        <Form.Label className="fw-semibold text-secondary small mb-2 d-block">
+          Backend Frameworks
+        </Form.Label>
+        <Row className="g-2">
+          {fwArr.map(fw => (
+            <Col sm={6} md={4} key={fw}>
+              <Card className="border p-2 bg-light rounded-3">
+                <Form.Check
+                  type="checkbox"
+                  name="fws"
+                  value={fw}
+                  id={`fw-${fw}`}
+                  label={fwDisplayNames[fw] || fw}
+                  defaultChecked={
+                    fw === 'Node' ? nodeChecked :
+                    fw === 'Django' ? djangoChecked :
+                    fw === 'Ror' ? rorChecked :
+                    fw === 'Spring' ? springChecked : aspChecked
+                  }
+                  onChange={handleCheckboxChange}
+                />
+              </Card>
+            </Col>
+          ))}
+          <Col sm={6} md={4}>
+            <Card className="border p-2 bg-light rounded-3">
+              <Form.Check
+                type="checkbox"
+                name="fws"
+                value="other"
+                id="fw-other"
+                label="Other"
+                defaultChecked={otherFwChecked}
+                onChange={handleCheckboxChange}
+              />
+            </Card>
+          </Col>
+        </Row>
+        {otherFwChecked && (
+          <div className="mt-3">
+            <Form.Label className="small text-muted">Other backend frameworks (comma-separated):</Form.Label>
+            <Form.Control
+              type="text"
+              placeholder="e.g. FastAPI, Go Fiber, NestJS"
+              defaultValue={!otherFwChecked ? undefined : doDiff<string>(beProfile.fws, fwArr).join(', ')}
+              onBlur={updateFwTxt}
+            />
+          </div>
+        )}
+      </Form.Group>
+
+      {/* Programming Languages */}
+      <Form.Group className="mb-4">
+        <Form.Label className="fw-semibold text-secondary small mb-2 d-block">
+          Programming Languages
+        </Form.Label>
+        <Row className="g-2">
+          {plArr.map(pl => (
+            <Col sm={6} md={4} key={pl}>
+              <Card className="border p-2 bg-light rounded-3">
+                <Form.Check
+                  type="checkbox"
+                  name="plangs"
+                  value={pl}
+                  id={`pl-${pl}`}
+                  label={pl}
+                  defaultChecked={
+                    pl === 'Java' ? javaChecked :
+                    pl === 'Python' ? pyChecked :
+                    pl === 'Ruby' ? rubyChecked :
+                    pl === 'Php' ? phpChecked : csChecked
+                  }
+                  onChange={handleCheckboxChange}
+                />
+              </Card>
+            </Col>
+          ))}
+          <Col sm={6} md={4}>
+            <Card className="border p-2 bg-light rounded-3">
+              <Form.Check
+                type="checkbox"
+                name="plangs"
+                value="other"
+                id="pl-other"
+                label="Other"
+                defaultChecked={otherPlChecked}
+                onChange={handleCheckboxChange}
+              />
+            </Card>
+          </Col>
+        </Row>
+        {otherPlChecked && (
+          <div className="mt-3">
+            <Form.Label className="small text-muted">Other languages (comma-separated):</Form.Label>
+            <Form.Control
+              type="text"
+              placeholder="e.g. Go, Rust, Kotlin"
+              defaultValue={!otherPlChecked ? undefined : doDiff<string>(beProfile.plangs, plArr).join(', ')}
+              onBlur={updatePlTxt}
+            />
+          </div>
+        )}
+      </Form.Group>
+
+      {/* Infrastructure & Database Assessment Table */}
+      <Form.Group className="mb-3">
+        <Form.Label className="fw-semibold text-secondary small mb-2 d-block">
+          Infrastructure & Database Competency (1 - Beginner to 5 - Expert)
+        </Form.Label>
+        <div className="table-responsive border rounded-3 p-2 bg-light">
+          <Table hover className="align-middle mb-0 text-center">
+            <thead>
+              <tr className="text-secondary small">
+                <th className="text-start ps-3">Tool / Tech</th>
+                <th style={{ width: '60px' }}>1</th>
+                <th style={{ width: '60px' }}>2</th>
+                <th style={{ width: '60px' }}>3</th>
+                <th style={{ width: '60px' }}>4</th>
+                <th style={{ width: '60px' }}>5</th>
+              </tr>
+            </thead>
+            <tbody>
+              {toolCategories.map(cat => (
+                <tr key={cat.key}>
+                  <td className="text-start ps-3 fw-medium text-dark">{cat.label}</td>
+                  {[1, 2, 3, 4, 5].map(lvl => (
+                    <td key={lvl}>
+                      <Form.Check
+                        type="radio"
+                        name={cat.key}
+                        value={lvl}
+                        id={`${cat.key}-${lvl}`}
+                        defaultChecked={cat.current === lvl}
+                        onChange={setLvl}
+                        className="d-inline-block"
+                      />
+                    </td>
+                  ))}
+                </tr>
+              ))}
+            </tbody>
+          </Table>
+        </div>
+      </Form.Group>
     </div>
   );
 }

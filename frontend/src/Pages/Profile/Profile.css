@@ -1,58 +1,25 @@
-.card {
-  width: 300px;
-  border: 1px solid #ccc;
-  border-radius: 5px;
-  overflow: hidden;
-  margin: 20px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+.profile-avatar-container {
+  width: 96px;
+  height: 96px;
 }
 
-.card img {
+.profile-avatar {
   width: 100%;
-  height: auto;
+  height: 100%;
+  object-fit: cover;
+  border: 3px solid #e0e7ff;
 }
 
-.card-body {
-  padding: 20px;
+.subprofiles-accordion .accordion-item {
+  border: 1px solid #e2e8f0;
 }
 
-.card-body h2 {
-  margin-top: 0;
-  font-size: 1.5rem;
+.subprofiles-accordion .accordion-button:not(.collapsed) {
+  background-color: #f1f5f9;
+  color: #1e293b;
+  box-shadow: none;
 }
 
-.card-body p {
-  margin-bottom: 0;
-  font-size: 1rem;
-}
-
-/* Style the collapsible container */
-.Collapsible {
-  border: 1px solid #ccc;
-  border-radius: 4px;
-  margin-bottom: 16px;
-}
-
-/* Style the header of the collapsible */
-.Collapsible__trigger {
-  cursor: pointer;
-  padding: 10px 20px;
-  background-color: #f0f0f0;
-  border-bottom: 1px solid #ccc;
-}
-
-/* Style the content area of the collapsible */
-.Collapsible__contentInner {
-  padding: 20px;
-  border-top: 1px solid #ccc;
-}
-
-/* Hide the content by default */
-.Collapsible__content {
-  display: none;
-}
-
-/* Show content when the collapsible is open */
-.Collapsible.is-open .Collapsible__content {
-  display: block;
+.subprofiles-accordion .accordion-button:focus {
+  box-shadow: 0 0 0 2px rgba(79, 70, 229, 0.2);
 }

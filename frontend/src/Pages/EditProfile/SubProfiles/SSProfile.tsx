@@ -1,4 +1,9 @@
 import React from 'react';
+import Form from 'react-bootstrap/Form';
+import Row from 'react-bootstrap/Row';
+import Col from 'react-bootstrap/Col';
+import Card from 'react-bootstrap/Card';
+import Table from 'react-bootstrap/Table';
 import { Profile, SSProfileI } from '../../../models/user.model';
 
 const commArr = ['Assertive', 'Passive', 'Aggressive', 'Collaborative'];
@@ -7,23 +12,23 @@ const confArr = ['Avoidance', 'Confrontation', 'Compromise', 'Collaboration'];
 function SSProfile({ ssProfile, setNewUserProfile }: { 
   ssProfile: SSProfileI,
   setNewUserProfile: React.Dispatch<React.SetStateAction<Profile | undefined>>,
- }): ReturnType<React.FC> {
+}): ReturnType<React.FC> {
 
   const [newSSProfile, setNewSSProfile] = React.useState<SSProfileI>(ssProfile);
 
   const [otherCommChecked, setOtherCommChecked] = React.useState<boolean>(
     !commArr.includes(ssProfile.commStyle)
-  )
+  );
   const [otherConfChecked, setOtherConfChecked] = React.useState<boolean>(
     !confArr.includes(ssProfile.conflictHandlingMethod)
-  )
+  );
 
   React.useEffect(() => {
     setNewUserProfile((prevState) => ({
       ...prevState,
       ssProfile: {...newSSProfile},
     }));
-  }, [setNewUserProfile, newSSProfile])
+  }, [setNewUserProfile, newSSProfile]);
 
   const handleCommConfStyleCh = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { value, name } = e.target;
@@ -34,7 +39,7 @@ function SSProfile({ ssProfile, setNewUserProfile }: {
       ...prevState,
       [name]: value
     }));
-  }
+  };
 
   const handleRadio = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { value, name } = e.target;
@@ -42,114 +47,206 @@ function SSProfile({ ssProfile, setNewUserProfile }: {
       ...prevState,
       [name]: Number(value)
     }));
-  }
+  };
+
+  const commRatings = [
+    { key: 'listeningLvl', label: 'Listening Comprehension', current: ssProfile.listeningLvl },
+    { key: 'verbalLvl', label: 'Verbal Expression', current: ssProfile.verbalLvl },
+    { key: 'writtenLvl', label: 'Written Communication', current: ssProfile.writtenLvl },
+  ];
+
+  const teamRatings = [
+    { key: 'collabLvl', label: 'Cross-functional Collaboration', current: ssProfile.collabLvl },
+    { key: 'conflictResolutionLvl', label: 'Conflict Resolution', current: ssProfile.conflictResolutionLvl },
+    { key: 'leadershipLvl', label: 'Team Leadership & Initiative', current: ssProfile.leadershipLvl },
+  ];
 
   return (
     <div>
-      <h4>Communication style:</h4><br />
-      <div onChange={handleCommConfStyleCh}>
-        <input defaultChecked={ssProfile.commStyle === 'Assertive'} type="radio" value={'Assertive'} name='commStyle' /> Assertive <br />
-        <input defaultChecked={ssProfile.commStyle === 'Passive'} type="radio" value={'Passive'} name='commStyle' /> Passive <br />
-        <input defaultChecked={ssProfile.commStyle === 'Aggressive'} type="radio" value={'Aggressive'} name='commStyle' /> Aggressive <br />
-        <input defaultChecked={ssProfile.commStyle === 'Collaborative'} type="radio" value={'Collaborative'} name='commStyle' /> Collaborative <br />
-        <input defaultChecked={otherCommChecked} type="radio" value={'other'} name='commStyle' 
-          onChange={() => setOtherCommChecked(prev => !prev)}
-        /> Other:
-        <input name='commStyle' type="text" defaultValue={
-          !otherCommChecked ? '' : ssProfile.commStyle
-        } disabled={!otherCommChecked} />
-      </div>
-      <h4>conflicts handling:</h4>
-      <div onChange={handleCommConfStyleCh}>
-        <input type="radio" defaultChecked={ssProfile.conflictHandlingMethod === 'Avoidance'} value={'Avoidance'} name='conflictHandlingMethod' /> Avoidance <br />
-        <input type="radio" defaultChecked={ssProfile.conflictHandlingMethod === 'Confrontation'} value={'Confrontation'} name='conflictHandlingMethod' /> Confrontation <br />
-        <input type="radio" defaultChecked={ssProfile.conflictHandlingMethod === 'Compromise'} value={'Compromise'} name='conflictHandlingMethod' /> Compromise <br />
-        <input type="radio" defaultChecked={ssProfile.conflictHandlingMethod === 'Collaboration'} value={'Collaboration'} name='conflictHandlingMethod' /> Collaboration <br />
-        <input type="radio" defaultChecked={otherConfChecked} value={'other'} name='conflictHandlingMethod'
-          onChange={() => setOtherConfChecked(prev => !prev)}
-        /> Other: 
-        <input name='conflictHandlingMethod' type="text" defaultValue={
-          !otherConfChecked ? '' : ssProfile.conflictHandlingMethod
-        } disabled={!otherConfChecked} />
-      </div>
-      <h4>Rate your communication skills:</h4>
-      <table>
-        <thead>
-          <tr>
-            <th></th>
-            <th>1</th>
-            <th>2</th>
-            <th>3</th>
-            <th>4</th>
-            <th>5</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-              <td>Listening:</td>
-              <td><input onChange={handleRadio} value={1} defaultChecked={ssProfile.listeningLvl === 1} type="radio" name='listeningLvl' /></td>
-              <td><input onChange={handleRadio} value={2} defaultChecked={ssProfile.listeningLvl === 2} type="radio" name='listeningLvl' /></td>
-              <td><input onChange={handleRadio} value={3} defaultChecked={ssProfile.listeningLvl === 3} type="radio" name='listeningLvl' /></td>
-              <td><input onChange={handleRadio} value={4} defaultChecked={ssProfile.listeningLvl === 4} type="radio" name='listeningLvl' /></td>
-              <td><input onChange={handleRadio} value={5} defaultChecked={ssProfile.listeningLvl === 5} type="radio" name='listeningLvl' /></td>
-          </tr>
-          <tr>
-              <td>Verbal:</td>
-              <td><input onChange={handleRadio} value={1} defaultChecked={ssProfile.verbalLvl === 1} type="radio" name='verbalLvl' /></td>
-              <td><input onChange={handleRadio} value={2} defaultChecked={ssProfile.verbalLvl === 2} type="radio" name='verbalLvl' /></td>
-              <td><input onChange={handleRadio} value={3} defaultChecked={ssProfile.verbalLvl === 3} type="radio" name='verbalLvl' /></td>
-              <td><input onChange={handleRadio} value={4} defaultChecked={ssProfile.verbalLvl === 4} type="radio" name='verbalLvl' /></td>
-              <td><input onChange={handleRadio} value={5} defaultChecked={ssProfile.verbalLvl === 5} type="radio" name='verbalLvl' /></td>
-          </tr>
-          <tr>
-              <td>Written:</td>
-              <td><input onChange={handleRadio} value={1} defaultChecked={ssProfile.writtenLvl === 1} type="radio" name='writtenLvl' /></td>
-              <td><input onChange={handleRadio} value={2} defaultChecked={ssProfile.writtenLvl === 2} type="radio" name='writtenLvl' /></td>
-              <td><input onChange={handleRadio} value={3} defaultChecked={ssProfile.writtenLvl === 3} type="radio" name='writtenLvl' /></td>
-              <td><input onChange={handleRadio} value={4} defaultChecked={ssProfile.writtenLvl === 4} type="radio" name='writtenLvl' /></td>
-              <td><input onChange={handleRadio} value={5} defaultChecked={ssProfile.writtenLvl === 5} type="radio" name='writtenLvl' /></td>
-          </tr>
-        </tbody>
-      </table>
-      <h4>Rate your ability to work in a team:</h4>
-      <table>
-        <thead>
-          <tr>
-            <th></th>
-            <th>1</th>
-            <th>2</th>
-            <th>3</th>
-            <th>4</th>
-            <th>5</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td>Collaborating:</td>
-              <td><input onChange={handleRadio} value={1} defaultChecked={ssProfile.collabLvl === 1} type="radio" name='collabLvl' /></td>
-              <td><input onChange={handleRadio} value={2} defaultChecked={ssProfile.collabLvl === 2} type="radio" name='collabLvl' /></td>
-              <td><input onChange={handleRadio} value={3} defaultChecked={ssProfile.collabLvl === 3} type="radio" name='collabLvl' /></td>
-              <td><input onChange={handleRadio} value={4} defaultChecked={ssProfile.collabLvl === 4} type="radio" name='collabLvl' /></td>
-              <td><input onChange={handleRadio} value={5} defaultChecked={ssProfile.collabLvl === 5} type="radio" name='collabLvl' /></td>
-          </tr>
-          <tr>
-            <td>Conflict resolution:</td>
-              <td><input onChange={handleRadio} value={1} defaultChecked={ssProfile.conflictResolutionLvl === 1} type="radio" name='conflictResolutionLvl' /></td>
-              <td><input onChange={handleRadio} value={2} defaultChecked={ssProfile.conflictResolutionLvl === 2} type="radio" name='conflictResolutionLvl' /></td>
-              <td><input onChange={handleRadio} value={3} defaultChecked={ssProfile.conflictResolutionLvl === 3} type="radio" name='conflictResolutionLvl' /></td>
-              <td><input onChange={handleRadio} value={4} defaultChecked={ssProfile.conflictResolutionLvl === 4} type="radio" name='conflictResolutionLvl' /></td>
-              <td><input onChange={handleRadio} value={5} defaultChecked={ssProfile.conflictResolutionLvl === 5} type="radio" name='conflictResolutionLvl' /></td>
-          </tr>
-          <tr>
-            <td>Leadership:</td>
-              <td><input onChange={handleRadio} value={1} defaultChecked={ssProfile.leadershipLvl === 1} type="radio" name='leadershipLvl' /></td>
-              <td><input onChange={handleRadio} value={2} defaultChecked={ssProfile.leadershipLvl === 2} type="radio" name='leadershipLvl' /></td>
-              <td><input onChange={handleRadio} value={3} defaultChecked={ssProfile.leadershipLvl === 3} type="radio" name='leadershipLvl' /></td>
-              <td><input onChange={handleRadio} value={4} defaultChecked={ssProfile.leadershipLvl === 4} type="radio" name='leadershipLvl' /></td>
-              <td><input onChange={handleRadio} value={5} defaultChecked={ssProfile.leadershipLvl === 5} type="radio" name='leadershipLvl' /></td>
-          </tr>
-        </tbody>
-      </table>
+      <h4 className="fw-semibold text-dark mb-1">Soft Skills & Communication</h4>
+      <p className="text-muted small mb-4">Tell us about your work style, communication preferences, and collaboration habits</p>
+
+      {/* Communication Style */}
+      <Form.Group className="mb-4">
+        <Form.Label className="fw-semibold text-secondary small mb-2 d-block">
+          Primary Communication Style
+        </Form.Label>
+        <Row className="g-2" onChange={handleCommConfStyleCh as any}>
+          {commArr.map(item => (
+            <Col sm={6} md={3} key={item}>
+              <Card className="border p-2 bg-light rounded-3">
+                <Form.Check
+                  type="radio"
+                  name="commStyle"
+                  value={item}
+                  id={`comm-${item}`}
+                  label={item}
+                  defaultChecked={ssProfile.commStyle === item}
+                />
+              </Card>
+            </Col>
+          ))}
+          <Col sm={6} md={3}>
+            <Card className="border p-2 bg-light rounded-3">
+              <Form.Check
+                type="radio"
+                name="commStyle"
+                value="other"
+                id="comm-other"
+                label="Other"
+                defaultChecked={otherCommChecked}
+                onChange={() => setOtherCommChecked(prev => !prev)}
+              />
+            </Card>
+          </Col>
+        </Row>
+        {otherCommChecked && (
+          <div className="mt-3">
+            <Form.Label className="small text-muted">Other communication style:</Form.Label>
+            <Form.Control
+              type="text"
+              name="commStyle"
+              placeholder="e.g. Adaptive / Visual"
+              defaultValue={!otherCommChecked ? '' : ssProfile.commStyle}
+              onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                setNewSSProfile(prev => ({ ...prev, commStyle: e.target.value }));
+              }}
+            />
+          </div>
+        )}
+      </Form.Group>
+
+      {/* Conflict Handling Method */}
+      <Form.Group className="mb-4">
+        <Form.Label className="fw-semibold text-secondary small mb-2 d-block">
+          Conflict Resolution Approach
+        </Form.Label>
+        <Row className="g-2" onChange={handleCommConfStyleCh as any}>
+          {confArr.map(item => (
+            <Col sm={6} md={3} key={item}>
+              <Card className="border p-2 bg-light rounded-3">
+                <Form.Check
+                  type="radio"
+                  name="conflictHandlingMethod"
+                  value={item}
+                  id={`conf-${item}`}
+                  label={item}
+                  defaultChecked={ssProfile.conflictHandlingMethod === item}
+                />
+              </Card>
+            </Col>
+          ))}
+          <Col sm={6} md={3}>
+            <Card className="border p-2 bg-light rounded-3">
+              <Form.Check
+                type="radio"
+                name="conflictHandlingMethod"
+                value="other"
+                id="conf-other"
+                label="Other"
+                defaultChecked={otherConfChecked}
+                onChange={() => setOtherConfChecked(prev => !prev)}
+              />
+            </Card>
+          </Col>
+        </Row>
+        {otherConfChecked && (
+          <div className="mt-3">
+            <Form.Label className="small text-muted">Other conflict handling method:</Form.Label>
+            <Form.Control
+              type="text"
+              name="conflictHandlingMethod"
+              placeholder="e.g. Mediation / Discussion"
+              defaultValue={!otherConfChecked ? '' : ssProfile.conflictHandlingMethod}
+              onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                setNewSSProfile(prev => ({ ...prev, conflictHandlingMethod: e.target.value }));
+              }}
+            />
+          </div>
+        )}
+      </Form.Group>
+
+      {/* Communication Ratings */}
+      <Form.Group className="mb-4">
+        <Form.Label className="fw-semibold text-secondary small mb-2 d-block">
+          Communication Competency Ratings (1 - Basic to 5 - Advanced)
+        </Form.Label>
+        <div className="table-responsive border rounded-3 p-2 bg-light">
+          <Table hover className="align-middle mb-0 text-center">
+            <thead>
+              <tr className="text-secondary small">
+                <th className="text-start ps-3">Skill</th>
+                <th style={{ width: '60px' }}>1</th>
+                <th style={{ width: '60px' }}>2</th>
+                <th style={{ width: '60px' }}>3</th>
+                <th style={{ width: '60px' }}>4</th>
+                <th style={{ width: '60px' }}>5</th>
+              </tr>
+            </thead>
+            <tbody>
+              {commRatings.map(cat => (
+                <tr key={cat.key}>
+                  <td className="text-start ps-3 fw-medium text-dark">{cat.label}</td>
+                  {[1, 2, 3, 4, 5].map(lvl => (
+                    <td key={lvl}>
+                      <Form.Check
+                        type="radio"
+                        name={cat.key}
+                        value={lvl}
+                        id={`${cat.key}-${lvl}`}
+                        defaultChecked={cat.current === lvl}
+                        onChange={handleRadio}
+                        className="d-inline-block"
+                      />
+                    </td>
+                  ))}
+                </tr>
+              ))}
+            </tbody>
+          </Table>
+        </div>
+      </Form.Group>
+
+      {/* Teamwork Ratings */}
+      <Form.Group className="mb-3">
+        <Form.Label className="fw-semibold text-secondary small mb-2 d-block">
+          Teamwork & Leadership Ratings (1 - Basic to 5 - Advanced)
+        </Form.Label>
+        <div className="table-responsive border rounded-3 p-2 bg-light">
+          <Table hover className="align-middle mb-0 text-center">
+            <thead>
+              <tr className="text-secondary small">
+                <th className="text-start ps-3">Skill</th>
+                <th style={{ width: '60px' }}>1</th>
+                <th style={{ width: '60px' }}>2</th>
+                <th style={{ width: '60px' }}>3</th>
+                <th style={{ width: '60px' }}>4</th>
+                <th style={{ width: '60px' }}>5</th>
+              </tr>
+            </thead>
+            <tbody>
+              {teamRatings.map(cat => (
+                <tr key={cat.key}>
+                  <td className="text-start ps-3 fw-medium text-dark">{cat.label}</td>
+                  {[1, 2, 3, 4, 5].map(lvl => (
+                    <td key={lvl}>
+                      <Form.Check
+                        type="radio"
+                        name={cat.key}
+                        value={lvl}
+                        id={`${cat.key}-${lvl}`}
+                        defaultChecked={cat.current === lvl}
+                        onChange={handleRadio}
+                        className="d-inline-block"
+                      />
+                    </td>
+                  ))}
+                </tr>
+              ))}
+            </tbody>
+          </Table>
+        </div>
+      </Form.Group>
     </div>
   );
 }

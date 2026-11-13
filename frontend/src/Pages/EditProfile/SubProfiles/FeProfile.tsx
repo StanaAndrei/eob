@@ -1,4 +1,9 @@
 import React from 'react';
+import Form from 'react-bootstrap/Form';
+import Row from 'react-bootstrap/Row';
+import Col from 'react-bootstrap/Col';
+import Card from 'react-bootstrap/Card';
+import Table from 'react-bootstrap/Table';
 import { DEFAULT_PROFILE, FeProfileI, Profile } from '../../../models/user.model';
 import { doDiff, doInter } from '../../../utils/arrset';
 
@@ -7,7 +12,7 @@ const fwsArr = ['React', 'Ng', 'Vue'];
 function FeProfile({ feProfile, setNewUserProfile }: { 
   feProfile: FeProfileI,
   setNewUserProfile: React.Dispatch<React.SetStateAction<Profile | undefined>>,
- }): ReturnType<React.FC> {
+}): ReturnType<React.FC> {
 
   const [newFeProfile, setnewFeProfile] = React.useState<FeProfileI>(feProfile);
   const [otherChecked, setOtherChecked] = React.useState<boolean>(
@@ -16,9 +21,6 @@ function FeProfile({ feProfile, setNewUserProfile }: {
 
   const handleCBChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { value, name, checked } = e.target;
-    console.log('====================================');
-    console.log(checked);
-    console.log('====================================');
     if (checked) {
       setnewFeProfile((prevState: FeProfileI) => ({
         ...prevState,
@@ -28,20 +30,20 @@ function FeProfile({ feProfile, setNewUserProfile }: {
       setnewFeProfile((prevState: FeProfileI): FeProfileI => {
         const auxState: FeProfileI = {...prevState};
         let aux: string[] = [...auxState[name as keyof FeProfileI] as string[]];
-        aux = aux.filter(e => e !== value)
+        aux = aux.filter(el => el !== value);
         if (name === 'fws') {
           auxState.fws = aux;
         } else {
           auxState.tools = aux;
         }
         return auxState;
-      })
+      });
     }
   };
-    
+
   const handleInpBlur = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { value } = e.target;
-    const inputFws = Array.from(new Set(value.split(',').map(item => item.trim()).filter(Boolean))); // Remove duplicates and empty strings
+    const inputFws = Array.from(new Set(value.split(',').map(item => item.trim()).filter(Boolean)));
 
     setnewFeProfile(prevState => {
       const currentFwsSet = new Set(prevState.fws);
@@ -50,10 +52,8 @@ function FeProfile({ feProfile, setNewUserProfile }: {
       const additions = inputFws.filter(item => !currentFwsSet.has(item));
       const deletions = prevState.fws.filter(item => !inputFwsSet.has(item));
 
-      // Add new items
       const updatedFws = [...prevState.fws, ...additions];
 
-      // Remove deleted items
       for (const item of deletions) {
         const index = updatedFws.indexOf(item);
         if (index > -1 && !doInter<string>(fwsArr, prevState.fws).includes(item)) {
@@ -73,15 +73,15 @@ function FeProfile({ feProfile, setNewUserProfile }: {
     setnewFeProfile(prevState => ({
       ...prevState,
       [name]: Number(value)
-    }))
-  }
+    }));
+  };
 
   React.useEffect(() => {
     setNewUserProfile(prevState => ({
       ...(prevState || {}),
       feProfile: {...newFeProfile},
-    }))
-  }, [setNewUserProfile, newFeProfile])
+    }));
+  }, [setNewUserProfile, newFeProfile]);
 
   React.useEffect(() => {
     if (!otherChecked) {
@@ -90,95 +90,162 @@ function FeProfile({ feProfile, setNewUserProfile }: {
         fws: doInter<string>(fwsArr, feProfile.fws)
       }));
     }
-  }, [otherChecked, feProfile])
+  }, [otherChecked, feProfile]);
+
+  const levelCategories = [
+    { key: 'jsLvl', label: 'JavaScript', current: feProfile.jsLvl },
+    { key: 'tsLvl', label: 'TypeScript', current: feProfile.tsLvl },
+    { key: 'htmlLvl', label: 'HTML', current: feProfile.htmlLvl },
+    { key: 'cssLvl', label: 'CSS', current: feProfile.cssLvl },
+  ];
+
+  const toolsOptions = [
+    { key: 'Npmyarn', label: 'NPM / Yarn' },
+    { key: 'Webpack', label: 'Webpack' },
+    { key: 'Gg', label: 'Grunt / Gulp' },
+    { key: 'Babel', label: 'Babel' },
+  ];
 
   return (
     <div>
-      <h4>Frameworks:</h4>
-      <label>
-        <input value={'React'} name='fws' type="checkbox" defaultChecked={newFeProfile.fws.includes('React')} onChange={handleCBChange} />
-        React
-      </label><br />
-      <label>
-        <input value={'Ng'} name='fws' type="checkbox" defaultChecked={newFeProfile.fws.includes('Ng')} onChange={handleCBChange} />
-        Angular
-      </label><br />
-      <label>
-        <input value={'Vue'} name='fws' type="checkbox" defaultChecked={newFeProfile.fws.includes('Vue')} onChange={handleCBChange} />
-        Vue
-      </label><br />
-      <label>
-        <input  type="checkbox" checked={otherChecked} onChange={() => setOtherChecked(prev => !prev)} />
-        Other:
-      </label>
-      <input type="text" disabled={!otherChecked} name='fws' onBlur={handleInpBlur} 
-        defaultValue={!otherChecked ? '' : doDiff<string>(feProfile.fws, fwsArr).join(',')}
-      /><br />
-      <hr />
-      <h4>Level of:</h4>
-      <table>
-        <thead>
-          <tr>
-            <th></th>
-            <th>1</th>
-            <th>2</th>
-            <th>3</th>
-            <th>4</th>
-            <th>5</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td>Javascript:</td>
-            <td><input value={1} defaultChecked={feProfile.jsLvl === 1} type="radio" name='jsLvl' onChange={handleRadioChange} /></td>
-            <td><input value={2}  defaultChecked={feProfile.jsLvl === 2} type="radio" name='jsLvl' onChange={handleRadioChange} /></td>
-            <td><input value={3}  defaultChecked={feProfile.jsLvl === 3} type="radio" name='jsLvl' onChange={handleRadioChange} /></td>
-            <td><input value={4}  defaultChecked={feProfile.jsLvl === 4} type="radio" name='jsLvl' onChange={handleRadioChange} /></td>
-            <td><input value={5}  defaultChecked={feProfile.jsLvl === 5} type="radio" name='jsLvl' onChange={handleRadioChange} /></td>
-          </tr>
-          <tr>
-            <td>Typescript:</td>
-            <td><input value={1}  defaultChecked={feProfile.tsLvl === 1} type="radio" name='tsLvl' onChange={handleRadioChange} /></td>
-            <td><input value={2}  defaultChecked={feProfile.tsLvl === 2} type="radio" name='tsLvl' onChange={handleRadioChange} /></td>
-            <td><input value={3}  defaultChecked={feProfile.tsLvl === 3} type="radio" name='tsLvl' onChange={handleRadioChange} /></td>
-            <td><input value={4}  defaultChecked={feProfile.tsLvl === 4} type="radio" name='tsLvl' onChange={handleRadioChange} /></td>
-            <td><input value={5}  defaultChecked={feProfile.tsLvl === 5} type="radio" name='tsLvl' onChange={handleRadioChange} /></td>
-          </tr>
-          <tr>
-            <td>HTML:</td>
-            <td><input value={1}  defaultChecked={feProfile.htmlLvl === 1} type="radio" name='htmlLvl' onChange={handleRadioChange} /></td>
-            <td><input value={2}  defaultChecked={feProfile.htmlLvl === 2} type="radio" name='htmlLvl' onChange={handleRadioChange} /></td>
-            <td><input value={3}  defaultChecked={feProfile.htmlLvl === 3} type="radio" name='htmlLvl' onChange={handleRadioChange} /></td>
-            <td><input value={4}  defaultChecked={feProfile.htmlLvl === 4} type="radio" name='htmlLvl' onChange={handleRadioChange} /></td>
-            <td><input value={5}  defaultChecked={feProfile.htmlLvl === 5} type="radio" name='htmlLvl' onChange={handleRadioChange} /></td>
-          </tr>
-          <tr>
-            <td>Css:</td>
-            <td><input value={1}  defaultChecked={feProfile.cssLvl === 1} type="radio" name='cssLvl' onChange={handleRadioChange} /></td>
-            <td><input value={2}  defaultChecked={feProfile.cssLvl === 2} type="radio" name='cssLvl' onChange={handleRadioChange} /></td>
-            <td><input value={3}  defaultChecked={feProfile.cssLvl === 3} type="radio" name='cssLvl' onChange={handleRadioChange} /></td>
-            <td><input value={4}  defaultChecked={feProfile.cssLvl === 4} type="radio" name='cssLvl' onChange={handleRadioChange} /></td>
-            <td><input value={5}  defaultChecked={feProfile.cssLvl === 5} type="radio" name='cssLvl' onChange={handleRadioChange} /></td>
-          </tr>
-        </tbody>
-      </table>
-      <h4>Tools:</h4>
-      <label>
-        <input name="tools" value={'Npmyarn'} type="checkbox" defaultChecked={feProfile.tools.includes('Npmyarn')} onChange={handleCBChange} />
-        NPM/Yarn
-      </label><br />
-      <label>
-        <input name="tools" value={'Webpack'} type="checkbox" defaultChecked={feProfile.tools.includes('Webpack')} onChange={handleCBChange} />
-        Webpack
-      </label><br />
-      <label>
-        <input name="tools" value={'Gg'} type="checkbox" defaultChecked={feProfile.tools.includes('Gg')} onChange={handleCBChange} />
-        Grunt/Gulp
-      </label><br />
-      <label>
-        <input name="tools" value={'Babel'} type="checkbox" defaultChecked={feProfile.tools.includes('Babel')} onChange={handleCBChange} />
-        Babel
-      </label><br />
+      <h4 className="fw-semibold text-dark mb-1">Frontend Development</h4>
+      <p className="text-muted small mb-4">Select your UI frameworks, experience ratings, and frontend build tools</p>
+
+      {/* Frameworks */}
+      <Form.Group className="mb-4">
+        <Form.Label className="fw-semibold text-secondary small mb-2 d-block">
+          Frontend Frameworks & Libraries
+        </Form.Label>
+        <Row className="g-2">
+          <Col sm={6} md={3}>
+            <Card className="border p-2 bg-light rounded-3">
+              <Form.Check
+                type="checkbox"
+                name="fws"
+                value="React"
+                id="fe-react"
+                label="React"
+                defaultChecked={newFeProfile.fws.includes('React')}
+                onChange={handleCBChange}
+              />
+            </Card>
+          </Col>
+          <Col sm={6} md={3}>
+            <Card className="border p-2 bg-light rounded-3">
+              <Form.Check
+                type="checkbox"
+                name="fws"
+                value="Ng"
+                id="fe-ng"
+                label="Angular"
+                defaultChecked={newFeProfile.fws.includes('Ng')}
+                onChange={handleCBChange}
+              />
+            </Card>
+          </Col>
+          <Col sm={6} md={3}>
+            <Card className="border p-2 bg-light rounded-3">
+              <Form.Check
+                type="checkbox"
+                name="fws"
+                value="Vue"
+                id="fe-vue"
+                label="Vue.js"
+                defaultChecked={newFeProfile.fws.includes('Vue')}
+                onChange={handleCBChange}
+              />
+            </Card>
+          </Col>
+          <Col sm={6} md={3}>
+            <Card className="border p-2 bg-light rounded-3">
+              <Form.Check
+                type="checkbox"
+                id="fe-other"
+                label="Other"
+                checked={otherChecked}
+                onChange={() => setOtherChecked(prev => !prev)}
+              />
+            </Card>
+          </Col>
+        </Row>
+        {otherChecked && (
+          <div className="mt-3">
+            <Form.Label className="small text-muted">Other frameworks (comma-separated):</Form.Label>
+            <Form.Control
+              type="text"
+              name="fws"
+              placeholder="e.g. Svelte, SolidJS"
+              defaultValue={!otherChecked ? '' : doDiff<string>(feProfile.fws, fwsArr).join(', ')}
+              onBlur={handleInpBlur}
+            />
+          </div>
+        )}
+      </Form.Group>
+
+      {/* Level Ratings Table */}
+      <Form.Group className="mb-4">
+        <Form.Label className="fw-semibold text-secondary small mb-2 d-block">
+          Skill Level Assessment (1 - Beginner to 5 - Expert)
+        </Form.Label>
+        <div className="table-responsive border rounded-3 p-2 bg-light">
+          <Table hover className="align-middle mb-0 text-center">
+            <thead>
+              <tr className="text-secondary small">
+                <th className="text-start ps-3">Skill</th>
+                <th style={{ width: '60px' }}>1</th>
+                <th style={{ width: '60px' }}>2</th>
+                <th style={{ width: '60px' }}>3</th>
+                <th style={{ width: '60px' }}>4</th>
+                <th style={{ width: '60px' }}>5</th>
+              </tr>
+            </thead>
+            <tbody>
+              {levelCategories.map(cat => (
+                <tr key={cat.key}>
+                  <td className="text-start ps-3 fw-medium text-dark">{cat.label}</td>
+                  {[1, 2, 3, 4, 5].map(lvl => (
+                    <td key={lvl}>
+                      <Form.Check
+                        type="radio"
+                        name={cat.key}
+                        value={lvl}
+                        id={`${cat.key}-${lvl}`}
+                        defaultChecked={cat.current === lvl}
+                        onChange={handleRadioChange}
+                        className="d-inline-block"
+                      />
+                    </td>
+                  ))}
+                </tr>
+              ))}
+            </tbody>
+          </Table>
+        </div>
+      </Form.Group>
+
+      {/* Tools */}
+      <Form.Group className="mb-3">
+        <Form.Label className="fw-semibold text-secondary small mb-2 d-block">
+          Frontend Build Tools & Package Managers
+        </Form.Label>
+        <Row className="g-2">
+          {toolsOptions.map(tool => (
+            <Col sm={6} md={3} key={tool.key}>
+              <Card className="border p-2 bg-light rounded-3">
+                <Form.Check
+                  type="checkbox"
+                  name="tools"
+                  value={tool.key}
+                  id={`tool-${tool.key}`}
+                  label={tool.label}
+                  defaultChecked={feProfile.tools.includes(tool.key)}
+                  onChange={handleCBChange}
+                />
+              </Card>
+            </Col>
+          ))}
+        </Row>
+      </Form.Group>
     </div>
   );
 }

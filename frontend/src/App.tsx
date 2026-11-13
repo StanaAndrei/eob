@@ -3,8 +3,9 @@ import {
   BrowserRouter as Router,
   Routes,
   Route,
-  //Navigate
 } from "react-router-dom";
+import Container from 'react-bootstrap/Container';
+import './App.css';
 import Nav from './components/Nav/Nav';
 import Login from './Pages/Auth/Login';
 import Home from './Pages/Home/Home';
@@ -20,29 +21,33 @@ import ChPassword from './Pages/ChPassword/ChPassword';
 import CreateOther from './Pages/CreateOther/CreateOther';
 
 function App(): ReturnType<React.FC> {
+  return (
+    <Router>
+      <div className="app-layout">
+        <Nav />
+        <main className="main-content">
+          <Container>
+            <Routes>
+              <Route index path='' element={ <Home /> } />
+              <Route path='/home' element={ <Home /> } />
+              <Route path='/edit-profile/:userId' element={ <EditProfile /> } />
+              <Route path='/logout' element={ <Logout /> } />
+              <Route path='/profile/:userId' element={ <Profile /> } />
+              <Route path='/me' element={ <Me /> } />
+              <Route path='/mk-other' element={ <RegisterOther /> } />
+              <Route path='/newbies/:userId' element={ <Newbies /> } />
+              <Route path='/emps' element={ <Emps /> } />
+              <Route path='/change-password' element={ <ChPassword /> } />
+              <Route path='/create-other' element={ <CreateOther /> } />
 
-  return <Router>
-    <Nav />
-    <Routes>
-
-      <Route index path='' element={ <Home /> } />
-      <Route path='/home' element={ <Home /> } />
-      <Route path='/edit-profile/:userId' element={ <EditProfile /> } />
-      <Route path='/logout' element={ <Logout /> } />
-      <Route path='/profile/:userId' element={ <Profile /> } />
-      <Route path='/me' element={ <Me /> } />
-      <Route path='/mk-other' element={ <RegisterOther /> } />
-      <Route path='/newbies/:userId' element={ <Newbies /> } />
-      <Route path='/emps' element={ <Emps /> } />
-      <Route path='/change-password' element={ <ChPassword /> } />
-      <Route path='/create-other' element={ <CreateOther /> } />
-
-
-      <Route path='/login' element={ <Login /> } />
-      <Route path='/register' element={ <Register /> } />
-
-    </Routes>
-  </Router>
+              <Route path='/login' element={ <Login /> } />
+              <Route path='/register' element={ <Register /> } />
+            </Routes>
+          </Container>
+        </main>
+      </div>
+    </Router>
+  );
 }
 
-export default App
+export default App;
