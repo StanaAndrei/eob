@@ -1,0 +1,25 @@
+services:
+  db:
+    ports:
+      - "3306:3306"
+
+  backend:
+    build:
+      target: dev
+    command: sh -c "npm run migration:run && npm run seed:run && npm run start:dev"
+    environment:
+      nodenv: development
+    volumes:
+      - ./backend:/app
+      - /app/node_modules
+
+  frontend:
+    build:
+      target: dev
+    environment:
+      VITE_API_URL: http://localhost:3001/api
+    ports:
+      - "5173:5173"
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
