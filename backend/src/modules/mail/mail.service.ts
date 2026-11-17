@@ -11,10 +11,11 @@ export class MailService {
     template: string,
     context: any,
   ): Promise<void> {
-    console.log('mail:', to, subject, template, context);
+    // console.log('mail:', to, subject, template, context);
     if (process.env.NODE_ENV === 'dev') {
+      console.log('mail:', to, subject, template, context);
       return;
     }
-    //await this.mailerService.sendMail({ to, subject, template, context });
+    await this.mailerService.sendMail({ to, subject, template, context });
   }
 }

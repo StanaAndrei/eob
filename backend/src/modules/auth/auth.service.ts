@@ -23,6 +23,7 @@ export class AuthService {
       }
       const payload = {
         id: user.id,
+        // Used by the frontend for role-specific navigation; guards read the current role from the database.
         rolePriority: user.rolePriority,
         changedPassword: user.changedPassword,
       };

@@ -8,6 +8,7 @@ import {
 import { Reflector } from '@nestjs/core';
 import ReqUtils from 'src/utils/req.util';
 import { JwtService } from '@nestjs/jwt';
+import { User } from '../user/user.entity';
 
 export const ROLES_KEY = 'roles';
 export const RolesPriority = (minRole: ROLE_PRIORITY) =>
@@ -27,7 +28,7 @@ export class RoleGuard implements CanActivate {
   ) {}
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
-    const reqMinPriority = this.reflector.getAllAndOverride<bigint>(ROLES_KEY, [
+    const reqMinPriority = this.reflector.getAllAndOverride<number>(ROLES_KEY, [
       context.getHandler(),
       context.getClass(),
     ]);
@@ -43,8 +44,11 @@ export class RoleGuard implements CanActivate {
       const payload = await this.jwtService.verifyAsync(token, {
         secret: process.env.JWT_SECRET || 'fallback_secret',
       });
-      const rolePriority = payload.rolePriority;
-      return rolePriority >= reqMinPriority;
+      const user = await User.findOne({ where: { id: payload.id } });
+      if (!user) {
+        throw new UnauthorizedException();
+      }
+      return user.rolePriority >= reqMinPriority;
     } catch {
       throw new UnauthorizedException();
     }

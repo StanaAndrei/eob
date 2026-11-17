@@ -36,7 +36,12 @@ function Register(): ReturnType<React.FC> {
     }
 
     setLoading(true);
-    axiosInstToSv.post('/user', formData).then(res => {
+    const registrationData = {
+      name: formData.name,
+      email: formData.email,
+      password: formData.password,
+    };
+    axiosInstToSv.post('/user', registrationData).then(res => {
       if (res.status === HttpStatusCode.Created) {
         navigate('/login');
         return;

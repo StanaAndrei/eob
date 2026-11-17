@@ -16,22 +16,32 @@ async function bootstrap() {
   app.use(morgan('tiny'));
   app.use(helmet());
   app.setGlobalPrefix('api');
-  app.useGlobalPipes(new ValidationPipe());
+  app.useGlobalPipes(
+    new ValidationPipe({
+      transform: true,
+      whitelist: true,
+      forbidNonWhitelisted: true,
+    }),
+  );
 
   const config = new DocumentBuilder()
     .setTitle('<UNK>')
     .setDescription('<UNK>')
-    .addBearerAuth({
-      type: 'http',
-      scheme: 'bearer',
-      bearerFormat: 'JWT',
-      name: 'Authorization',
-      in: 'header',
-    }, 'access-token').build();
+    .addBearerAuth(
+      {
+        type: 'http',
+        scheme: 'bearer',
+        bearerFormat: 'JWT',
+        name: 'Authorization',
+        in: 'header',
+      },
+      'access-token',
+    )
+    .build();
   const docFactory = () => SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('api-docs', app, docFactory);
 
   await app.listen(3001);
   console.log('WORKS', process.env.NODE_ENV);
 }
-bootstrap().then(_ => {});
+bootstrap().then((_) => {});

@@ -30,7 +30,7 @@ services:
       DB_PORT: 3306
       DB_USERNAME: ${DB_USERNAME:-eob_user}
       DB_PASSWORD: ${DB_PASSWORD:-eob_pass}
-      nodenv: production
+      NODE_ENV: production
     ports:
       - "3001:3001"
 

@@ -83,11 +83,10 @@ export class User extends BaseEntity {
   ): Promise<User[]> {
     return await this.createQueryBuilder('user')
       .where('user.paused IS FALSE')
-      .andWhere(`user.managerId=${managerId}`)
-      //.andWhere('user.isOld IS TRUE')
+      .andWhere('user.managerId = :managerId', { managerId })
       .innerJoinAndSelect('user.profile', 'profile')
       .innerJoinAndSelect(`profile.${profileTp}Profile`, `${profileTp}Profile`)
-      .where(`profile.${profileTp}_profile_id IS NOT NULL`)
+      .andWhere(`profile.${profileTp}_profile_id IS NOT NULL`)
       .getMany();
   }
 

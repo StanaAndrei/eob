@@ -5,7 +5,9 @@ import {
   HttpCode,
   HttpStatus,
   InternalServerErrorException,
+  ForbiddenException,
   Param,
+  ParseIntPipe,
   Patch,
   Post,
   Req,
@@ -36,7 +38,13 @@ export class UserController {
   }
 
   @Get('/:id')
-  async getWithProfile(@Param('id') id: number) {
+  async getWithProfile(
+    @Param('id', ParseIntPipe) id: number,
+    @Req() request: Request,
+  ) {
+    if (!(await this.userService.canAccessProfile(request['user_id'], id))) {
+      throw new ForbiddenException();
+    }
     return await this.userService.getWithProfile(id);
   }
 
@@ -79,7 +87,12 @@ export class UserController {
 
   @RolesPriority(ROLE_PRIORITY.BUDDY)
   @Get('/newbies-of/:id')
-  async getNewbiesOf(@Req() request: Request, @Param('id') id: number) {
+  async getNewbiesOf(
+    @Req() request: Request,
+    @Param('id', ParseIntPipe) id: number,
+  ) {
+    if (Number(request['user_id']) !== Number(id))
+      throw new ForbiddenException();
     const newbies = await this.userService.getNewbiesOf(id);
     if (!newbies) {
       throw new InternalServerErrorException();
@@ -90,10 +103,19 @@ export class UserController {
   @RolesPriority(ROLE_PRIORITY.MANAGER)
   @Patch('/manual-match/:buddyId/:newbieId')
   async manualMatch(
-    @Param('buddyId') buddyId: number,
-    @Param('newbieId') newbieId: number,
+    @Param('buddyId', ParseIntPipe) buddyId: number,
+    @Param('newbieId', ParseIntPipe) newbieId: number,
+    @Req() request: Request,
     @Res() res: Response,
   ) {
+    const managerId = Number(request['user_id']);
+    const employees = await this.userService.getMyEmployees(managerId);
+    if (
+      !employees?.some((user) => user.id === buddyId) ||
+      !employees.some((user) => user.id === newbieId)
+    ) {
+      throw new ForbiddenException();
+    }
     const ok = await this.userService.manualMatch(buddyId, newbieId);
     res.status(ok ? HttpStatus.NO_CONTENT : HttpStatus.NOT_MODIFIED).send();
   }

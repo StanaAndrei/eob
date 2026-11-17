@@ -30,6 +30,21 @@ export class UserService {
     }
   }
 
+  async canAccessProfile(actorId: number, targetId: number): Promise<boolean> {
+    if (actorId === targetId) return true;
+    const target = await User.findOne({ where: { id: targetId } });
+    if (!target) return false;
+    return target.managerId === actorId || target.buddyId === actorId;
+  }
+
+  async canManageProfile(actorId: number, targetId: number): Promise<boolean> {
+    if (actorId === targetId) return true;
+    const target = await User.findOne({ where: { id: targetId } });
+    if (!target || target.managerId !== actorId) return false;
+    const manager = await User.findOne({ where: { id: actorId } });
+    return manager?.isManager === true;
+  }
+
   async create(userDTO: UserDTO): Promise<boolean> {
     try {
       const user = new User();
@@ -116,14 +131,20 @@ export class UserService {
       const newbie = await User.findOne({
         where: { id: newbieId },
       });
-      if (!newbie || newbie.buddyId === buddyId) {
+      const buddy = await User.findOne({ where: { id: buddyId } });
+      if (
+        !newbie ||
+        !buddy ||
+        newbie.id === buddy.id ||
+        newbie.buddyId === buddyId ||
+        newbie.isOld ||
+        !buddy.isOld ||
+        newbie.managerId !== buddy.managerId
+      ) {
         return false;
       }
       newbie.buddyId = buddyId;
       await newbie.save();
-      const buddy = await User.findOne({
-        where: { id: buddyId },
-      });
       await this.mailService.sendEmail(
         newbie.email,
         MATCHED_SUBJECT,

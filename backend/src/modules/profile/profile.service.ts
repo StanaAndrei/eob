@@ -20,7 +20,7 @@ export class ProfileService {
       const user = await User.findOne({
         where: { id: userID },
       });
-      if (user.profile) {
+      if (!user || user.profileId) {
         return false;
       }
       await User.getRepository().manager.transaction(
@@ -70,6 +70,7 @@ export class ProfileService {
           'profile.ssProfile',
         ],
       });
+      if (!user?.profile) return false;
       let { profile } = user;
       console.log(user);
       await Profile.getRepository().manager.transaction(
@@ -106,6 +107,7 @@ export class ProfileService {
           await transactionalEntityManager.query('SET FOREIGN_KEY_CHECKS=1');
         },
       );
+      user.profile = profile;
       await this.matchBasedOnProfile(user);
       return true;
     } catch (err) {
@@ -115,89 +117,70 @@ export class ProfileService {
   }
 
   private async matchBasedOnProfile(targetUser: User): Promise<boolean> {
-    let bestMatch = {
-      simScores: [0, 0],
-      id: -1,
-    };
-    type ScoreOfStrArrsTp = (arr1: string[], arr2: string[]) => number;
-    const getScoreOfArr: ScoreOfStrArrsTp = (arr1, arr2) =>
-      arr1.filter((elem: string) => arr2.includes(elem)).length;
+    const overlapCount = (a: string[] = [], b: string[] = []) =>
+      a.filter((item) => b.includes(item)).length;
     try {
-      if (targetUser?.profile?.feProfile) {
-        const fePotUsers = await User.findByProfile('fe', targetUser.managerId);
-        const targetFws = targetUser.profile.feProfile.fws;
-        const targetTools = targetUser.profile.feProfile.tools;
-        for (const fePotUser of fePotUsers) {
+      if (!targetUser?.profile) return false;
+      const findBest = async (
+        kind: 'fe' | 'be',
+        targetSkills: string[][],
+      ): Promise<number | undefined> => {
+        const candidates = await User.findByProfile(kind, targetUser.managerId);
+        let bestId: number | undefined;
+        let bestScore = 0;
+        for (const candidate of candidates) {
           if (
-            fePotUser.isOld === targetUser.isOld ||
-            fePotUser.id === targetUser.id
-          ) {
+            candidate.id === targetUser.id ||
+            candidate.isOld === targetUser.isOld
+          )
             continue;
-          }
-          const pairFws = fePotUser.profile.feProfile.fws;
-          const pairTools = fePotUser.profile.feProfile.tools;
-          const simScores = [
-            getScoreOfArr(targetFws, pairFws),
-            getScoreOfArr(targetTools, pairTools),
-          ];
-          if (bestMatch.simScores < simScores) {
-            bestMatch = { simScores, id: fePotUser.id };
-          }
-        }
-        if (bestMatch.id !== -1) {
-          if (!targetUser.isOld) {
-            return await this.userService.manualMatch(
-              bestMatch.id,
-              targetUser.id,
-            );
-          } else {
-            return await this.userService.manualMatch(
-              targetUser.id,
-              bestMatch.id,
-            );
+          if (!targetUser.isOld && candidate.buddyId != null) continue;
+          const skills =
+            kind === 'fe'
+              ? [
+                  candidate.profile.feProfile.fws,
+                  candidate.profile.feProfile.tools,
+                ]
+              : [
+                  candidate.profile.beProfile.fws,
+                  candidate.profile.beProfile.plangs,
+                ];
+          const score = targetSkills.reduce(
+            (sum, list, index) => sum + overlapCount(list, skills[index]),
+            0,
+          );
+          if (score > bestScore) {
+            bestScore = score;
+            bestId = candidate.id;
           }
         }
+        return bestId;
+      };
+
+      if (targetUser.profile.feProfile) {
+        const matchId = await findBest('fe', [
+          targetUser.profile.feProfile.fws,
+          targetUser.profile.feProfile.tools,
+        ]);
+        if (matchId)
+          return targetUser.isOld
+            ? this.userService.manualMatch(targetUser.id, matchId)
+            : this.userService.manualMatch(matchId, targetUser.id);
       }
-      if (targetUser?.profile?.beProfile) {
-        const bePotUsers = await User.findByProfile('be', targetUser.managerId);
-        const targetFws = targetUser.profile.beProfile.fws;
-        const targetLangs = targetUser.profile.beProfile.plangs;
-        for (const bePotUser of bePotUsers) {
-          if (
-            bePotUser.isOld === targetUser.isOld ||
-            bePotUser.id === targetUser.id
-          ) {
-            continue;
-          }
-          const pairFws = bePotUser.profile.beProfile.fws;
-          const pairPlangs = bePotUser.profile.beProfile.plangs;
-          const simScores = [
-            getScoreOfArr(targetFws, pairFws),
-            getScoreOfArr(targetLangs, pairPlangs),
-          ];
-          if (bestMatch.simScores < simScores) {
-            bestMatch = { simScores, id: bePotUser.id };
-          }
-        }
-        if (bestMatch.id !== -1) {
-          if (!targetUser.isOld) {
-            return await this.userService.manualMatch(
-              bestMatch.id,
-              targetUser.id,
-            );
-          } else {
-            return await this.userService.manualMatch(
-              targetUser.id,
-              bestMatch.id,
-            );
-          }
-        }
+      if (targetUser.profile.beProfile) {
+        const matchId = await findBest('be', [
+          targetUser.profile.beProfile.fws,
+          targetUser.profile.beProfile.plangs,
+        ]);
+        if (matchId)
+          return targetUser.isOld
+            ? this.userService.manualMatch(targetUser.id, matchId)
+            : this.userService.manualMatch(matchId, targetUser.id);
       }
     } catch (err) {
       console.error(err);
       return false;
-    } finally {
-      return false;
     }
+    return false;
   }
 }
