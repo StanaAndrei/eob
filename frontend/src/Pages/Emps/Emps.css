@@ -1,8 +1,118 @@
-.Ebox {
-  width: 320px;
-  height: 50px;
-  padding: 10px;
-  border: 5px solid gray;
+.emps-page {
+  width: min(100% - 2rem, 960px);
+  margin: 0 auto;
+  padding: 2rem 0 3rem;
+}
+
+.emps-heading {
+  margin-bottom: 1.5rem;
+}
+
+.emps-heading h1 {
+  margin: 0 0 0.35rem;
+  color: var(--text-main, #1e293b);
+  font-size: clamp(1.6rem, 3vw, 2rem);
+  font-weight: 700;
+}
+
+.emps-heading p {
   margin: 0;
-  padding-bottom: 30px;
+  color: var(--text-muted, #64748b);
+}
+
+.emps-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 350px), 1fr));
+  gap: 1rem;
+}
+
+.emps-card {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.85rem;
+  min-width: 0;
+  padding: 1.1rem 1.2rem;
+  border: 1px solid var(--border-color, #e2e8f0);
+  border-radius: 12px;
+  background: var(--card-bg, #fff);
+  box-shadow: 0 1px 3px rgba(15, 23, 42, 0.05);
+}
+
+.emps-person {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.65rem;
+}
+
+.emps-name,
+.emps-current-buddy a {
+  color: var(--text-main, #1e293b);
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.emps-name:hover,
+.emps-current-buddy a:hover {
+  color: var(--primary-color, #4f46e5);
+  text-decoration: underline;
+}
+
+.emps-role {
+  padding: 0.2rem 0.6rem;
+  border-radius: 999px;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.emps-role.is-buddy {
+  background: #dcfce7;
+  color: #166534;
+}
+
+.emps-role.is-newbie {
+  background: var(--primary-light, #e0e7ff);
+  color: var(--primary-color, #4f46e5);
+}
+
+.emps-current-buddy {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0.35rem;
+  color: var(--text-muted, #64748b);
+  font-size: 0.9rem;
+}
+
+.emps-detail-label {
+  color: var(--text-muted, #64748b);
+}
+
+.emps-selector {
+  width: 100%;
+}
+
+.emps-selector .multiselect-container {
+  width: 100%;
+}
+
+.emps-selector .search-wrapper {
+  min-height: 42px;
+  border-color: var(--border-color, #e2e8f0) !important;
+  border-radius: 8px !important;
+  color: var(--text-main, #1e293b);
+}
+
+@media (max-width: 480px) {
+  .emps-page {
+    width: min(100% - 1.25rem, 960px);
+    padding-top: 1.25rem;
+  }
+
+  .emps-card {
+    padding: 1rem;
+  }
 }

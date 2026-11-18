@@ -14,8 +14,9 @@ interface MiniBoxProps {
   user: User;
 }
 
-const MiniBox : React.FC<MiniBoxProps> = ({ user }) => !user ? null : <div>
-  buddy: <a href={`/profile/${user.id}`}>{user.name}</a>
+const MiniBox : React.FC<MiniBoxProps> = ({ user }) => !user ? null : <div className="emps-current-buddy">
+  <span className="emps-detail-label">Current buddy</span>
+  <a href={`/profile/${user.id}`}>{user.name}</a>
 </div>
 
 function Emps(): ReturnType<React.FC> {
@@ -57,29 +58,41 @@ function Emps(): ReturnType<React.FC> {
   }
 
   return (
-    <div>
+    <main className="emps-page">
+      <header className="emps-heading">
+        <h1>Employees</h1>
+        <p>Manage buddy assignments for your team.</p>
+      </header>
+      <div className="emps-list">
       {
         users.map((elem, id) => {
-          return <div className='Ebox' key={id}>
-            <a href={`/profile/${elem.id}`}>{elem.name}</a>
-            {'  '}{elem.rolePriority === 2 ? 'BUDDY' : 'NEWBIE'}
-            {' '}
+          return <section className='emps-card' key={elem.id ?? id}>
+            <div className="emps-person">
+              <a className="emps-name" href={`/profile/${elem.id}`}>{elem.name}</a>
+              <span className={`emps-role ${elem.rolePriority === 2 ? 'is-buddy' : 'is-newbie'}`}>
+                {elem.rolePriority === 2 ? 'Buddy' : 'Newbie'}
+              </span>
+            </div>
             {elem.rolePriority === 1 && 
               <MiniBox user={users[users.findIndex(({ id }) => id === elem.buddyId)]} />
             }
             {elem.rolePriority === 1 && 
-            <Multiselect 
+            <div className="emps-selector">
+            <Multiselect
               singleSelect={true}
               onSelect={(_selList: OptionTp[], selItem: OptionTp) => handleOnSelect(selItem, elem.id)}
               ref={msRef}
               displayValue='name'
               options={buddiesO}
-              placeholder='Change Buddy'
-              />}
-          </div>
+              placeholder='Choose a buddy'
+            />
+            </div>
+            }
+          </section>
         })
       }
-    </div>
+      </div>
+    </main>
   );
 }
 
